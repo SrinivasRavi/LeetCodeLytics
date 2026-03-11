@@ -20,19 +20,9 @@ struct MainTabView: View {
                     Label("Dashboard", systemImage: "chart.bar.fill")
                 }
 
-            CalendarView()
-                .tabItem {
-                    Label("Calendar", systemImage: "calendar")
-                }
-
             SubmissionsView()
                 .tabItem {
                     Label("Submissions", systemImage: "list.bullet.clipboard")
-                }
-
-            ContestView()
-                .tabItem {
-                    Label("Contest", systemImage: "trophy.fill")
                 }
 
             SkillsView()

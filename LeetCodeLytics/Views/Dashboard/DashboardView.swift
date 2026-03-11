@@ -27,10 +27,15 @@ struct DashboardView: View {
                         StreakCard(
                             dccStreak: vm.dccStreak,
                             anysolveStreak: vm.anysolveStreak,
+                            maxStreak: vm.streakData?.streak ?? 0,
                             totalActiveDays: vm.streakData?.totalActiveDays ?? 0
                         )
 
                         AcceptanceRateView(rate: vm.acceptanceRate)
+
+                        if let calendar = vm.submissionCalendar {
+                            HeatmapCard(calendar: calendar)
+                        }
 
                         if !profile.badges.isEmpty {
                             BadgesView(badges: profile.badges)
@@ -57,6 +62,32 @@ struct DashboardView: View {
         .task {
             await vm.load(username: username)
         }
+    }
+}
+
+private struct HeatmapCard: View {
+    let calendar: SubmissionCalendar
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Submission Activity")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                Spacer()
+                Text("Last 52 weeks")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HeatmapGridView(calendar: calendar)
+                    .padding(.bottom, 4)
+            }
+        }
+        .padding()
+        .background(Color(UIColor.secondarySystemBackground))
+        .cornerRadius(16)
     }
 }
 

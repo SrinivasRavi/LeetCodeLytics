@@ -5,6 +5,7 @@ final class DashboardViewModel: ObservableObject {
     @Published var profile: MatchedUser?
     @Published var allQuestionsCount: [ProblemCount] = []
     @Published var streakData: StreakData?
+    @Published var submissionCalendar: SubmissionCalendar?
     @Published var dccStreak: Int = 0
     @Published var anysolveStreak: Int = 0
     @Published var isLoading = false
@@ -54,6 +55,7 @@ final class DashboardViewModel: ObservableObject {
             allQuestionsCount = fetchedQuestions
             streakData = fetchedCalendar
             let cal = SubmissionCalendar(jsonString: fetchedCalendar.submissionCalendar)
+            submissionCalendar = cal
             anysolveStreak = StreakCalculator.computeStreak(from: cal)
 
             let cache = DashboardCache(
@@ -88,6 +90,7 @@ final class DashboardViewModel: ObservableObject {
         profile = cache.profile
         allQuestionsCount = cache.allQuestionsCount
         streakData = cache.streakData
+        submissionCalendar = SubmissionCalendar(jsonString: cache.streakData.submissionCalendar)
         dccStreak = cache.dccStreak
         anysolveStreak = cache.anysolveStreak
     }
