@@ -5,6 +5,9 @@ struct LeetCodeLyticsApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .task {
+                    await LeetCodeService.shared.bootstrapCSRF()
+                }
         }
     }
 }

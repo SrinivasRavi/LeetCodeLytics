@@ -105,7 +105,7 @@ private struct RefreshErrorBanner: View {
             Image(systemName: "exclamationmark.triangle.fill")
                 .foregroundColor(.orange)
                 .font(.caption)
-            Text("Refresh failed — showing cached data")
+            Text("Refresh failed: \(message)")
                 .font(.caption)
                 .foregroundColor(.orange)
             Spacer()
@@ -131,7 +131,7 @@ private struct Last52WeeksCard: View {
             HStack(spacing: 0) {
                 StreakItem(value: maxStreak, icon: "🏆", label: "Max Streak")
                 Divider().background(Color.gray.opacity(0.3)).frame(height: 50)
-                StreakItem(value: totalActiveDays, icon: "📅", label: "Active Days")
+                StreakItem(value: totalActiveDays, icon: "📅", label: "Active for")
             }
 
             Divider().background(Color.gray.opacity(0.2))

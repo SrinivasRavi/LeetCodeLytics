@@ -438,3 +438,12 @@ After generating all files and running `xcodegen generate`:
 - [ ] `xcode-select` points to Xcode: `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`
 - [ ] Build succeeds: `xcodebuild -project LeetCodeLytics.xcodeproj -scheme LeetCodeLytics -destination 'platform=iOS Simulator,name=iPhone 16' build 2>&1 | grep -E '(error:|Build succeeded)'`
 - [ ] Git commit tagged `v1.0`
+
+---
+
+## Backlog (deferred — do not implement until explicitly requested)
+
+- **Unique Solved Streak:** Split "Solved Streak" into two separate stats:
+  - "Any Solved Streak" — consecutive days with ≥1 successful submission (any problem)
+  - "Unique Solved Streak" — consecutive days where a problem was accepted that had never been solved before
+- **DCC Streak end-to-end test:** Verify 🔥 Daily Question Streak works correctly after session cookies are entered in Settings

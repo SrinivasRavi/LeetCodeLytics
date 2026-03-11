@@ -1,5 +1,11 @@
 # LeetCodeLytics – Claude Build Guide
 
+## Thoughts after v1.4 testing
+1. I like that you added pull to refresh in all tabs without me suggesting that explicitly. I tested it in submissions tab and it works well. I can't get the dashboard to work still. Can you display the values for everything in dashboard over here in terminal (Except calendar of course)? I want to see where is the problem, the graphQL endpoint at Leetcode or in our app.
+2. Currently I see "Refresh failed - Showing cached data" in a small persistent banner in "Dashboard" tab.
+2. For all streaks, next to the number just say "days" instead of mentioning it in subtext. Also for "Active days" replace it with "Active for". Replace "DCC Streak" with "Daily Question Streak".
+3. I haven't tested DCC Streak yet. In some other version. I also want in future version this change -  split "Solved Streak" into 2 -> "Any solved streak" and "Unique solved streak". The former just tracks successfull submissions made in the day. "Unique solved streak" ensures the problem was never solved before. Please don't do it now, it's just so that I don't forget. Maybe create backlog tasks in Claude.md and I will ask you to come to those.
+
 ## Thoughts after v1.3 testing
 1. Overall I like the changes you made in the UI for most part. Good job and thank you.
 2. "Last 52 weeks" is mentioned for both tiles "Max streak, Active days" and "Submission Activity". Maybe have the title as "Last 52 weeks" and combine those 2 tiles?

@@ -29,6 +29,24 @@ final class LeetCodeService {
 
     private let endpoint = URL(string: "https://leetcode.com/graphql")!
 
+    /// Call once at app launch. GETs leetcode.com so URLSession's shared cookie jar
+    /// receives a fresh csrftoken — required for all GraphQL POST requests.
+    func bootstrapCSRF() async {
+        let leetcodeURL = URL(string: "https://leetcode.com/")!
+        let alreadyHasCsrf = HTTPCookieStorage.shared
+            .cookies(for: leetcodeURL)?
+            .contains(where: { $0.name == "csrftoken" }) ?? false
+        guard !alreadyHasCsrf else { return }
+
+        var req = URLRequest(url: leetcodeURL)
+        req.setValue(
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+            forHTTPHeaderField: "User-Agent"
+        )
+        req.setValue("https://leetcode.com", forHTTPHeaderField: "Referer")
+        _ = try? await URLSession.shared.data(for: req)
+    }
+
     private func buildRequest(query: String, variables: [String: Any] = [:]) -> URLRequest {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
@@ -40,10 +58,23 @@ final class LeetCodeService {
         )
 
         let session = UserDefaults.standard.string(forKey: "leetcodeSession") ?? ""
-        let csrf = UserDefaults.standard.string(forKey: "csrfToken") ?? ""
-        if !session.isEmpty || !csrf.isEmpty {
-            request.setValue("LEETCODE_SESSION=\(session); csrftoken=\(csrf)", forHTTPHeaderField: "Cookie")
-            request.setValue(csrf, forHTTPHeaderField: "x-csrftoken")
+        let userCsrf = UserDefaults.standard.string(forKey: "csrfToken") ?? ""
+
+        // Read csrftoken from shared cookie jar (set by bootstrapCSRF) if user hasn't provided one
+        let jarCsrf = HTTPCookieStorage.shared
+            .cookies(for: endpoint)?
+            .first(where: { $0.name == "csrftoken" })?.value ?? ""
+        let effectiveCsrf = userCsrf.isEmpty ? jarCsrf : userCsrf
+
+        // Cookie header: always include LEETCODE_SESSION if provided;
+        // csrftoken in Cookie header only when user-provided (jar sends it automatically otherwise)
+        if !session.isEmpty {
+            request.setValue("LEETCODE_SESSION=\(session); csrftoken=\(effectiveCsrf)", forHTTPHeaderField: "Cookie")
+        }
+
+        // x-csrftoken must always be set explicitly — not sent automatically by URLSession
+        if !effectiveCsrf.isEmpty {
+            request.setValue(effectiveCsrf, forHTTPHeaderField: "x-csrftoken")
         }
 
         let body: [String: Any] = ["query": query, "variables": variables]
