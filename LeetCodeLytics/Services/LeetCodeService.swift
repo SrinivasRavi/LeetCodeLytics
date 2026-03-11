@@ -95,23 +95,21 @@ final class LeetCodeService {
             if http.statusCode == 429 { throw LeetCodeError.rateLimited }
         }
 
-        do {
-            let json = try JSONDecoder().decode([String: [String: T]].self, from: data)
-            if let value = json["data"]?[responseKey] {
-                return value
-            }
-            // Check for null matchedUser (invalid username)
-            if let dataDict = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let dataInner = dataDict["data"] as? [String: Any],
-               dataInner[responseKey] is NSNull {
-                throw LeetCodeError.invalidUsername
-            }
+        guard let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let dataDict = root["data"] as? [String: Any] else {
+            let preview = String(data: data.prefix(300), encoding: .utf8) ?? "non-UTF8"
             throw LeetCodeError.decodingError(
                 NSError(domain: "LeetCodeService", code: 0,
-                        userInfo: [NSLocalizedDescriptionKey: "Key '\(responseKey)' not found in response"])
+                        userInfo: [NSLocalizedDescriptionKey: "Unexpected response: \(preview)"])
             )
-        } catch let error as LeetCodeError {
-            throw error
+        }
+        let valueAny = dataDict[responseKey]
+        guard let valueAny, !(valueAny is NSNull) else {
+            throw LeetCodeError.invalidUsername
+        }
+        do {
+            let valueData = try JSONSerialization.data(withJSONObject: valueAny)
+            return try JSONDecoder().decode(T.self, from: valueData)
         } catch {
             throw LeetCodeError.decodingError(error)
         }
