@@ -19,8 +19,10 @@ struct UserProfileInfo: Codable {
 }
 
 struct UserBadge: Codable {
+    let id: Int?
     let name: String
     let icon: String
+    let creationDate: String?
 }
 
 struct MatchedUser: Codable {

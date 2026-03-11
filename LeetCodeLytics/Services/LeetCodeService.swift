@@ -98,7 +98,7 @@ final class LeetCodeService {
               acSubmissionNum { difficulty count submissions }
               totalSubmissionNum { difficulty count submissions }
             }
-            badges { name icon }
+            badges { id name icon creationDate }
           }
         }
         """

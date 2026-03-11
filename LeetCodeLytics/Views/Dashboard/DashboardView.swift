@@ -24,14 +24,17 @@ struct DashboardView: View {
                             totalHard: vm.totalHard
                         )
 
-                        StreakCard(
+                        AcceptanceRateView(rate: vm.acceptanceRate)
+
+                        CurrentStreakCard(
                             dccStreak: vm.dccStreak,
-                            anysolveStreak: vm.anysolveStreak,
+                            anysolveStreak: vm.anysolveStreak
+                        )
+
+                        HistoricalStreakCard(
                             maxStreak: vm.streakData?.streak ?? 0,
                             totalActiveDays: vm.streakData?.totalActiveDays ?? 0
                         )
-
-                        AcceptanceRateView(rate: vm.acceptanceRate)
 
                         if let calendar = vm.submissionCalendar {
                             HeatmapCard(calendar: calendar)
@@ -94,6 +97,24 @@ private struct HeatmapCard: View {
 private struct BadgesView: View {
     let badges: [UserBadge]
 
+    private var dateFormatter: DateFormatter {
+        let df = DateFormatter()
+        df.dateFormat = "yyyy-MM-dd"
+        return df
+    }
+
+    private var displayFormatter: DateFormatter {
+        let df = DateFormatter()
+        df.dateStyle = .medium
+        df.timeStyle = .none
+        return df
+    }
+
+    private func formattedDate(_ raw: String?) -> String? {
+        guard let raw, let date = dateFormatter.date(from: raw) else { return nil }
+        return displayFormatter.string(from: date)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Badges")
@@ -101,8 +122,8 @@ private struct BadgesView: View {
                 .foregroundColor(.white)
 
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(badges, id: \.name) { badge in
+                HStack(alignment: .top, spacing: 16) {
+                    ForEach(Array(badges.enumerated()), id: \.offset) { _, badge in
                         VStack(spacing: 4) {
                             AsyncImage(url: URL(string: badge.icon)) { image in
                                 image.resizable().aspectRatio(contentMode: .fit)
@@ -110,16 +131,25 @@ private struct BadgesView: View {
                                 Image(systemName: "rosette")
                                     .foregroundColor(Color(hex: "FFA116"))
                             }
-                            .frame(width: 40, height: 40)
+                            .frame(width: 44, height: 44)
 
                             Text(badge.name)
                                 .font(.caption2)
-                                .foregroundColor(.gray)
+                                .foregroundColor(.white)
                                 .multilineTextAlignment(.center)
-                                .frame(width: 60)
+                                .frame(width: 70)
+
+                            if let date = formattedDate(badge.creationDate) {
+                                Text(date)
+                                    .font(.system(size: 9))
+                                    .foregroundColor(.gray)
+                                    .multilineTextAlignment(.center)
+                                    .frame(width: 70)
+                            }
                         }
                     }
                 }
+                .padding(.vertical, 4)
             }
         }
         .padding()
