@@ -9,8 +9,8 @@ programmatically. The user must be able to open the `.xcodeproj` and hit ⌘R wi
 
 ## Versioning Plan
 
-### Version 1.0 — App Only (current target)
-A fully functioning standalone iOS app. No widgets, no App Groups, no entitlements, no WidgetKit.
+### Version 1.0 — Core App (current target)
+A fully functioning standalone iOS app. No caching, no widgets, no App Groups, no entitlements, no WidgetKit.
 One target, one scheme. Git tag: `v1.0`
 
 **Features:**
@@ -22,14 +22,46 @@ One target, one scheme. Git tag: `v1.0`
 - Skills tab: top tags by Advanced/Intermediate/Fundamental with bar charts, language breakdown
 - Settings tab: change username, enter LEETCODE_SESSION + csrftoken, refresh button, last updated timestamp
 
-**Explicitly excluded from V1.0:** WidgetKit, App Groups, `Shared/` folder, entitlements files, `CacheService`, any widget views
+**Explicitly excluded from V1.0:** caching, WidgetKit, App Groups, `Shared/` folder, entitlements files, any widget views
 
-### Version 2.0 — Widgets (future)
-Add widget extension on top of the working V1.0 app.
-Introduces: `Shared/` folder, App Groups, entitlements, `CacheService`, `LeetCodeLyticsWidget` target.
+**Forward-compatibility requirement:** Include a no-op `CacheService.swift` stub with the correct interface.
+ViewModels call `CacheService.load()` / `CacheService.save()` — in V1.0 load returns nil and save is a no-op.
+This means V1.1 only touches `CacheService.swift`, not the ViewModels.
+
+### Version 1.1 — Local Caching
+Add `UserDefaults`-backed caching to `CacheService`. ViewModels unchanged.
+- On launch: show cached data immediately, fetch fresh in background
+- Cache keyed by username (switching users shows correct data)
+- `CacheService` uses a configurable `suiteName` (nil = standard UserDefaults in V1.1)
+- Cache considered stale after 30 min but still shown during refresh
+Git tag: `v1.1`
+
+### Version 1.2 — Polish & Refinements
+Minor fixes and UX improvements identified from hands-on testing of V1.1.
+No major new features. Scope defined after V1.1 is tested.
+Git tag: `v1.2`
+
+### Version 2.0 — Widgets
+Add widget extension on top of V1.1.
+- Migrate `CacheService` suiteName from nil → `group.com.leetcodelytics.shared` (one-line change)
+- Add `LeetCodeLytics.entitlements` + `LeetCodeLyticsWidget.entitlements` with App Groups
+- Add `Shared/` folder (move `SubmissionCalendar.swift`, `StreakCalculator.swift` there)
+- Add `LeetCodeLyticsWidget` target with all widget sizes + lock screen
 Git tag: `v2.0`
 
 ---
+
+## Forward Compatibility Rules (apply from V1.0 onwards)
+
+These rules ensure future versions are additive, not rewriting:
+
+1. **All models must be `Codable`** — required for V1.1 UserDefaults caching and V2.0 App Groups
+2. **ViewModels call `CacheService`, never `UserDefaults` directly** — so caching implementation is swappable
+3. **`CacheService` has a configurable suiteName** — nil in V1.0/V1.1, `group.com.leetcodelytics.shared` in V2.0
+4. **`SubmissionCalendar` and `StreakCalculator` live in `Services/`** in V1.0; in V2.0 they move to `Shared/` — keep them free of UIKit/SwiftUI imports so the move is painless
+5. **No business logic in Views** — all data derivation in ViewModels, so adding an Insights tab in V1.2 is pure addition
+6. **Username always read from `@AppStorage("username")`** — single source of truth, consistent across versions
+7. **`LeetCodeService` stays a plain class, not protocol-wrapped** — avoid premature abstraction; if testing is needed later, wrap it then
 
 ## Build Strategy (to avoid iterating on broken builds)
 
