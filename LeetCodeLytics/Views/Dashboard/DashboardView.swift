@@ -3,6 +3,7 @@ import SwiftUI
 struct DashboardView: View {
     @AppStorage("username") private var username = ""
     @StateObject private var vm = DashboardViewModel()
+    @State private var lastUpdatedText = ""
 
     var body: some View {
         NavigationStack {
@@ -10,77 +11,136 @@ struct DashboardView: View {
                 if vm.isLoading && vm.profile == nil {
                     ProgressView("Loading...")
                         .frame(maxWidth: .infinity, minHeight: 300)
-                } else if let profile = vm.profile {
+                } else {
                     VStack(spacing: 16) {
-                        ProfileHeaderView(profile: profile)
-
-                        ProblemStatsCard(
-                            easySolved: vm.easySolved,
-                            mediumSolved: vm.mediumSolved,
-                            hardSolved: vm.hardSolved,
-                            totalSolved: vm.totalSolved,
-                            totalEasy: vm.totalEasy,
-                            totalMedium: vm.totalMedium,
-                            totalHard: vm.totalHard
-                        )
-
-                        AcceptanceRateView(rate: vm.acceptanceRate)
-
-                        CurrentStreakCard(
-                            dccStreak: vm.dccStreak,
-                            anysolveStreak: vm.anysolveStreak
-                        )
-
-                        HistoricalStreakCard(
-                            maxStreak: vm.streakData?.streak ?? 0,
-                            totalActiveDays: vm.streakData?.totalActiveDays ?? 0
-                        )
-
-                        if let calendar = vm.submissionCalendar {
-                            HeatmapCard(calendar: calendar)
+                        // Inline error banner — shown even when cached data is visible
+                        if let error = vm.errorMessage {
+                            if vm.profile != nil {
+                                RefreshErrorBanner(message: error)
+                            } else {
+                                ContentUnavailableView(
+                                    "Failed to Load",
+                                    systemImage: "wifi.slash",
+                                    description: Text(error)
+                                )
+                            }
                         }
 
-                        if !profile.badges.isEmpty {
-                            BadgesView(badges: profile.badges)
+                        if let profile = vm.profile {
+                            ProfileHeaderView(profile: profile)
+
+                            ProblemStatsCard(
+                                easySolved: vm.easySolved,
+                                mediumSolved: vm.mediumSolved,
+                                hardSolved: vm.hardSolved,
+                                totalSolved: vm.totalSolved,
+                                totalEasy: vm.totalEasy,
+                                totalMedium: vm.totalMedium,
+                                totalHard: vm.totalHard
+                            )
+
+                            AcceptanceRateView(rate: vm.acceptanceRate)
+
+                            CurrentStreakCard(
+                                dccStreak: vm.dccStreak,
+                                anysolveStreak: vm.anysolveStreak
+                            )
+
+                            if let calendar = vm.submissionCalendar {
+                                Last52WeeksCard(
+                                    maxStreak: vm.streakData?.streak ?? 0,
+                                    totalActiveDays: vm.streakData?.totalActiveDays ?? 0,
+                                    calendar: calendar
+                                )
+                            }
+
+                            if !profile.badges.isEmpty {
+                                BadgesView(badges: profile.badges)
+                            }
                         }
                     }
                     .padding()
-                } else if let error = vm.errorMessage {
-                    ContentUnavailableView(
-                        "Failed to Load",
-                        systemImage: "wifi.slash",
-                        description: Text(error)
-                    )
                 }
+            }
+            .refreshable {
+                await vm.load(username: username)
+                refreshTimestamp()
             }
             .navigationTitle("Dashboard")
             .toolbar {
-                if vm.isLoading {
-                    ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if vm.isLoading {
                         ProgressView()
+                    }
+                }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    if !lastUpdatedText.isEmpty {
+                        Text(lastUpdatedText)
+                            .font(.caption2)
+                            .foregroundColor(.gray)
                     }
                 }
             }
         }
         .task {
             await vm.load(username: username)
+            refreshTimestamp()
         }
+    }
+
+    private func refreshTimestamp() {
+        let cacheKey = "dashboard_\(username)"
+        guard let ts = CacheService.timestamp(for: cacheKey) else { return }
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .abbreviated
+        lastUpdatedText = "Updated \(formatter.localizedString(for: ts, relativeTo: Date()))"
     }
 }
 
-private struct HeatmapCard: View {
+private struct RefreshErrorBanner: View {
+    let message: String
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundColor(.orange)
+                .font(.caption)
+            Text("Refresh failed — showing cached data")
+                .font(.caption)
+                .foregroundColor(.orange)
+            Spacer()
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color.orange.opacity(0.1))
+        .cornerRadius(8)
+    }
+}
+
+private struct Last52WeeksCard: View {
+    let maxStreak: Int
+    let totalActiveDays: Int
     let calendar: SubmissionCalendar
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Last 52 weeks")
+                .font(.caption)
+                .foregroundColor(.gray)
+
+            HStack(spacing: 0) {
+                StreakItem(value: maxStreak, icon: "🏆", label: "Max Streak")
+                Divider().background(Color.gray.opacity(0.3)).frame(height: 50)
+                StreakItem(value: totalActiveDays, icon: "📅", label: "Active Days")
+            }
+
+            Divider().background(Color.gray.opacity(0.2))
+
             HStack {
                 Text("Submission Activity")
-                    .font(.headline)
+                    .font(.subheadline.weight(.medium))
                     .foregroundColor(.white)
                 Spacer()
-                Text("Last 52 weeks")
-                    .font(.caption)
-                    .foregroundColor(.gray)
             }
 
             ScrollView(.horizontal, showsIndicators: false) {
@@ -97,21 +157,21 @@ private struct HeatmapCard: View {
 private struct BadgesView: View {
     let badges: [UserBadge]
 
-    private var dateFormatter: DateFormatter {
+    private let inputFormatter: DateFormatter = {
         let df = DateFormatter()
         df.dateFormat = "yyyy-MM-dd"
         return df
-    }
+    }()
 
-    private var displayFormatter: DateFormatter {
+    private let displayFormatter: DateFormatter = {
         let df = DateFormatter()
         df.dateStyle = .medium
         df.timeStyle = .none
         return df
-    }
+    }()
 
     private func formattedDate(_ raw: String?) -> String? {
-        guard let raw, let date = dateFormatter.date(from: raw) else { return nil }
+        guard let raw, let date = inputFormatter.date(from: raw) else { return nil }
         return displayFormatter.string(from: date)
     }
 

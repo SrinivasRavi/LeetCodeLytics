@@ -69,10 +69,7 @@ final class DashboardViewModel: ObservableObject {
             CacheService.saveTimestamp(for: cacheKey)
             UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastUpdated")
         } catch {
-            // Only surface error if we have no cached data to show
-            if profile == nil {
-                errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
-            }
+            errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
         }
 
         // DCC streak — requires auth; fail silently if not available

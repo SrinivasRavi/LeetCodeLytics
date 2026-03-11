@@ -28,9 +28,7 @@ final class CalendarViewModel: ObservableObject {
             CacheService.save(data, key: cacheKey)
             CacheService.saveTimestamp(for: cacheKey)
         } catch {
-            if streakData == nil {
-                errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
-            }
+            errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
         }
 
         isLoading = false

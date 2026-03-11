@@ -17,6 +17,9 @@ struct SubmissionsView: View {
                     }
                     .listStyle(.insetGrouped)
                     .scrollContentBackground(.hidden)
+                    .refreshable {
+                        await vm.load(username: username)
+                    }
                 } else if let error = vm.errorMessage {
                     ContentUnavailableView(
                         "Failed to Load",

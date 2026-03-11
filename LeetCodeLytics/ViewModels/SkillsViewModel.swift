@@ -31,9 +31,7 @@ final class SkillsViewModel: ObservableObject {
             CacheService.save(SkillsCache(tagCounts: skills, languageStats: languageStats), key: cacheKey)
             CacheService.saveTimestamp(for: cacheKey)
         } catch {
-            if tagCounts == nil {
-                errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
-            }
+            errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
         }
 
         isLoading = false

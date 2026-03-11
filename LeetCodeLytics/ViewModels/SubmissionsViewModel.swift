@@ -25,9 +25,7 @@ final class SubmissionsViewModel: ObservableObject {
             CacheService.save(fresh, key: cacheKey)
             CacheService.saveTimestamp(for: cacheKey)
         } catch {
-            if submissions.isEmpty {
-                errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
-            }
+            errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
         }
 
         isLoading = false

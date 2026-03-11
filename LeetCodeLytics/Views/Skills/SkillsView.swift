@@ -8,6 +8,7 @@ struct SkillsView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
+
                 if vm.isLoading && vm.tagCounts == nil {
                     ProgressView("Loading...")
                         .frame(maxWidth: .infinity, minHeight: 300)
@@ -34,6 +35,9 @@ struct SkillsView: View {
                         description: Text(error)
                     )
                 }
+            }
+            .refreshable {
+                await vm.load(username: username)
             }
             .navigationTitle("Skills")
             .toolbar {
