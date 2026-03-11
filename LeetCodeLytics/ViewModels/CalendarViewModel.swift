@@ -10,15 +10,29 @@ final class CalendarViewModel: ObservableObject {
     private let service = LeetCodeService.shared
 
     func load(username: String) async {
-        isLoading = true
+        let cacheKey = "calendar_\(username)"
+
+        // Show cached data immediately if available
+        if let cached = CacheService.load(StreakData.self, key: cacheKey) {
+            streakData = cached
+            submissionCalendar = SubmissionCalendar(jsonString: cached.submissionCalendar)
+        }
+
+        isLoading = streakData == nil
         errorMessage = nil
+
         do {
             let data = try await service.fetchCalendar(username: username)
             streakData = data
             submissionCalendar = SubmissionCalendar(jsonString: data.submissionCalendar)
+            CacheService.save(data, key: cacheKey)
+            CacheService.saveTimestamp(for: cacheKey)
         } catch {
-            errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
+            if streakData == nil {
+                errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
+            }
         }
+
         isLoading = false
     }
 

@@ -32,7 +32,15 @@ final class DashboardViewModel: ObservableObject {
     }
 
     func load(username: String) async {
-        isLoading = true
+        let cacheKey = "dashboard_\(username)"
+
+        // Show cached data immediately if available
+        if let cached = CacheService.load(DashboardCache.self, key: cacheKey) {
+            apply(cached)
+        }
+
+        // Only show loading spinner when there's no data at all
+        isLoading = profile == nil
         errorMessage = nil
 
         async let profileTask = service.fetchUserProfile(username: username)
@@ -47,8 +55,22 @@ final class DashboardViewModel: ObservableObject {
             streakData = fetchedCalendar
             let cal = SubmissionCalendar(jsonString: fetchedCalendar.submissionCalendar)
             anysolveStreak = StreakCalculator.computeStreak(from: cal)
+
+            let cache = DashboardCache(
+                profile: fetchedProfile,
+                allQuestionsCount: fetchedQuestions,
+                streakData: fetchedCalendar,
+                dccStreak: dccStreak,
+                anysolveStreak: anysolveStreak
+            )
+            CacheService.save(cache, key: cacheKey)
+            CacheService.saveTimestamp(for: cacheKey)
+            UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastUpdated")
         } catch {
-            errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
+            // Only surface error if we have no cached data to show
+            if profile == nil {
+                errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
+            }
         }
 
         // DCC streak — requires auth; fail silently if not available
@@ -60,6 +82,21 @@ final class DashboardViewModel: ObservableObject {
         }
 
         isLoading = false
-        CacheService.save(username, key: "lastUsername")
     }
+
+    private func apply(_ cache: DashboardCache) {
+        profile = cache.profile
+        allQuestionsCount = cache.allQuestionsCount
+        streakData = cache.streakData
+        dccStreak = cache.dccStreak
+        anysolveStreak = cache.anysolveStreak
+    }
+}
+
+private struct DashboardCache: Codable {
+    let profile: MatchedUser
+    let allQuestionsCount: [ProblemCount]
+    let streakData: StreakData
+    let dccStreak: Int
+    let anysolveStreak: Int
 }

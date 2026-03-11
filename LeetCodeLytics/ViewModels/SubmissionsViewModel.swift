@@ -9,13 +9,27 @@ final class SubmissionsViewModel: ObservableObject {
     private let service = LeetCodeService.shared
 
     func load(username: String) async {
-        isLoading = true
-        errorMessage = nil
-        do {
-            submissions = try await service.fetchRecentSubmissions(username: username)
-        } catch {
-            errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
+        let cacheKey = "submissions_\(username)"
+
+        // Show cached data immediately if available
+        if let cached = CacheService.load([RecentSubmission].self, key: cacheKey) {
+            submissions = cached
         }
+
+        isLoading = submissions.isEmpty
+        errorMessage = nil
+
+        do {
+            let fresh = try await service.fetchRecentSubmissions(username: username)
+            submissions = fresh
+            CacheService.save(fresh, key: cacheKey)
+            CacheService.saveTimestamp(for: cacheKey)
+        } catch {
+            if submissions.isEmpty {
+                errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
+            }
+        }
+
         isLoading = false
     }
 }

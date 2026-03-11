@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -55,7 +55,7 @@
 		75D78A30AFB4D4823052140F /* AcceptanceRateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcceptanceRateView.swift; sourceTree = "<group>"; };
 		7B2528FC72FE6E19DFC96FED /* LanguageStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageStats.swift; sourceTree = "<group>"; };
 		7FFFEB249A0448DA815D090D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		8091B3758F01D00F081CE0AE /* LeetCodeLytics.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = LeetCodeLytics.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8091B3758F01D00F081CE0AE /* LeetCodeLytics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LeetCodeLytics.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		978492C53A4CF11DAE76BDEB /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
 		985151837D8C869E394F8C49 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		9D980A3C4B9016AFD6FF0571 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
@@ -256,7 +256,6 @@
 			);
 			mainGroup = 29DCE6E34FB17909D5F65641;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -366,6 +365,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZHH8F344D5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -450,6 +450,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZHH8F344D5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

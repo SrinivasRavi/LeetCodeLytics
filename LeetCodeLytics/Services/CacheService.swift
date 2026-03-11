@@ -1,14 +1,43 @@
 import Foundation
 
-/// V1.0 stub — load always returns nil, save is a no-op.
-/// V1.1 will replace the body of these two methods with UserDefaults logic.
-/// ViewModels must never call UserDefaults directly; always go through CacheService.
+/// V1.1: UserDefaults-backed cache.
+/// suiteName is nil (standard UserDefaults) in V1.1.
+/// V2.0 sets suiteName = "group.com.leetcodelytics.shared" for App Groups — one-line change.
 enum CacheService {
+    static var suiteName: String? = nil
+
+    private static var defaults: UserDefaults {
+        UserDefaults(suiteName: suiteName) ?? .standard
+    }
+
     static func load<T: Codable>(_ type: T.Type, key: String) -> T? {
-        return nil
+        guard let data = defaults.data(forKey: key) else { return nil }
+        return try? JSONDecoder().decode(type, from: data)
     }
 
     static func save<T: Codable>(_ value: T, key: String) {
-        // no-op in V1.0
+        guard let data = try? JSONEncoder().encode(value) else { return }
+        defaults.set(data, forKey: key)
+    }
+
+    static func saveTimestamp(for key: String) {
+        defaults.set(Date().timeIntervalSince1970, forKey: key + "_ts")
+    }
+
+    static func timestamp(for key: String) -> Date? {
+        let ts = defaults.double(forKey: key + "_ts")
+        guard ts > 0 else { return nil }
+        return Date(timeIntervalSince1970: ts)
+    }
+
+    /// Cache is considered stale after 30 minutes.
+    static func isStale(key: String, maxAge: TimeInterval = 1800) -> Bool {
+        guard let ts = timestamp(for: key) else { return true }
+        return Date().timeIntervalSince(ts) > maxAge
+    }
+
+    static func clear(key: String) {
+        defaults.removeObject(forKey: key)
+        defaults.removeObject(forKey: key + "_ts")
     }
 }
