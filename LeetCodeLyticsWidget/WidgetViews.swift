@@ -16,13 +16,15 @@ struct SmallSolvedWidgetView: View {
 
             Text("⚡ \(entry.data.anysolveStreak) days")
                 .font(.system(size: 16, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundStyle(Color.white)
 
             Text("Solved")
                 .font(.caption2)
-                .foregroundColor(.gray)
+                .foregroundStyle(Color(white: 0.6))
         }
+        .padding(8)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .widgetURL(URL(string: "leetcodelytics://dashboard"))
     }
 }
 
@@ -41,13 +43,15 @@ struct SmallDCCWidgetView: View {
 
             Text("🔥 \(entry.data.dccStreak) days")
                 .font(.system(size: 16, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundStyle(Color.white)
 
             Text("Daily Question")
                 .font(.caption2)
-                .foregroundColor(.gray)
+                .foregroundStyle(Color(white: 0.6))
         }
+        .padding(8)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .widgetURL(URL(string: "leetcodelytics://dashboard"))
     }
 }
 
@@ -79,6 +83,7 @@ struct MediumWidgetView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .widgetURL(URL(string: "leetcodelytics://dashboard"))
     }
 }
 
@@ -114,12 +119,13 @@ struct LargeWidgetView: View {
 
             Text("Activity")
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundStyle(Color(white: 0.6))
 
             WidgetHeatmapView(recentCalendar: entry.data.recentCalendar)
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .widgetURL(URL(string: "leetcodelytics://dashboard"))
     }
 }
 
@@ -134,10 +140,10 @@ private struct StreakPill: View {
         VStack(spacing: 2) {
             Text("\(icon) \(value)")
                 .font(.system(size: 15, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundStyle(Color.white)
             Text(label)
                 .font(.system(size: 10))
-                .foregroundColor(.gray)
+                .foregroundStyle(Color(white: 0.6))
         }
     }
 }
@@ -154,7 +160,7 @@ private struct DifficultyDot: View {
                 .frame(width: 7, height: 7)
             Text("\(label): \(value)")
                 .font(.system(size: 11))
-                .foregroundColor(.white)
+                .foregroundStyle(Color.white)
         }
     }
 }

@@ -8,7 +8,6 @@ struct SolvedStreakWidget: Widget {
         StaticConfiguration(kind: "SolvedStreak", provider: LeetCodeProvider()) { entry in
             SmallSolvedWidgetView(entry: entry)
                 .containerBackground(Color.black, for: .widget)
-                .widgetURL(URL(string: "leetcodelytics://dashboard"))
         }
         .configurationDisplayName("Solved Streak")
         .description("Your consecutive days with any solve.")
@@ -23,7 +22,6 @@ struct DCCStreakWidget: Widget {
         StaticConfiguration(kind: "DCCStreak", provider: LeetCodeProvider()) { entry in
             SmallDCCWidgetView(entry: entry)
                 .containerBackground(Color.black, for: .widget)
-                .widgetURL(URL(string: "leetcodelytics://dashboard"))
         }
         .configurationDisplayName("Daily Question Streak")
         .description("Your consecutive Daily Coding Challenge streak.")
@@ -38,7 +36,6 @@ struct LeetCodeMediumWidget: Widget {
         StaticConfiguration(kind: "LeetCodeMedium", provider: LeetCodeProvider()) { entry in
             MediumWidgetView(entry: entry)
                 .containerBackground(Color.black, for: .widget)
-                .widgetURL(URL(string: "leetcodelytics://dashboard"))
         }
         .configurationDisplayName("LeetCodeLytics")
         .description("Both streaks and solved counts at a glance.")
@@ -53,7 +50,6 @@ struct LeetCodeLargeWidget: Widget {
         StaticConfiguration(kind: "LeetCodeLarge", provider: LeetCodeProvider()) { entry in
             LargeWidgetView(entry: entry)
                 .containerBackground(Color.black, for: .widget)
-                .widgetURL(URL(string: "leetcodelytics://dashboard"))
         }
         .configurationDisplayName("LeetCodeLytics")
         .description("Streaks, solved counts, and activity heatmap.")
