@@ -1,10 +1,10 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @AppStorage("username") private var username = ""
-    @AppStorage("leetcodeSession") private var leetcodeSession = ""
-    @AppStorage("csrfToken") private var csrfToken = ""
-    @AppStorage("lastUpdated") private var lastUpdated: Double = 0
+    @AppStorage("username", store: .appGroup) private var username = ""
+    @AppStorage("leetcodeSession", store: .appGroup) private var leetcodeSession = ""
+    @AppStorage("csrfToken", store: .appGroup) private var csrfToken = ""
+    @AppStorage("lastUpdated", store: .appGroup) private var lastUpdated: Double = 0
 
     @State private var newUsername = ""
     @State private var isValidating = false

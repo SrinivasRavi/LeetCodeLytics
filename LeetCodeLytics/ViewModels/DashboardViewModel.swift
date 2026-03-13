@@ -1,4 +1,5 @@
 import Foundation
+import WidgetKit
 
 @MainActor
 final class DashboardViewModel: ObservableObject {
@@ -82,7 +83,7 @@ final class DashboardViewModel: ObservableObject {
                     )
                     CacheService.save(cache, key: cacheKey)
                     CacheService.saveTimestamp(for: cacheKey)
-                    UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastUpdated")
+                    UserDefaults.appGroup.set(Date().timeIntervalSince1970, forKey: "lastUpdated")
                 } catch {
                     self.errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
                 }
@@ -92,6 +93,29 @@ final class DashboardViewModel: ObservableObject {
                     let streak = try await self.service.fetchStreakCounter()
                     self.dccStreak = streak.streakCount
                 } catch {}
+
+                // Write widget data after all fetches complete
+                if let cal = self.submissionCalendar {
+                    let cutoff = Date().timeIntervalSince1970 - Double(10 * 7 * 86400)
+                    let recentCal = Dictionary(
+                        cal.dailyCounts
+                            .filter { Double($0.key) >= cutoff }
+                            .map { (String($0.key), $0.value) },
+                        uniquingKeysWith: { first, _ in first }
+                    )
+                    let widgetData = WidgetData(
+                        anysolveStreak: self.anysolveStreak,
+                        dccStreak: self.dccStreak,
+                        easySolved: self.easySolved,
+                        mediumSolved: self.mediumSolved,
+                        hardSolved: self.hardSolved,
+                        recentCalendar: recentCal
+                    )
+                    if let encoded = try? JSONEncoder().encode(widgetData) {
+                        UserDefaults.appGroup.set(encoded, forKey: "widgetData")
+                    }
+                    WidgetCenter.shared.reloadAllTimelines()
+                }
 
                 self.isLoading = false
             }

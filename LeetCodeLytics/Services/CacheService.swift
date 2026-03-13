@@ -1,10 +1,8 @@
 import Foundation
 
-/// V1.1: UserDefaults-backed cache.
-/// suiteName is nil (standard UserDefaults) in V1.1.
-/// V2.0 sets suiteName = "group.com.leetcodelytics.shared" for App Groups — one-line change.
+/// V2.0: suiteName changed to App Group for widget data sharing.
 enum CacheService {
-    static var suiteName: String? = nil
+    static var suiteName: String? = "group.com.leetcodelytics.shared"
 
     private static var defaults: UserDefaults {
         UserDefaults(suiteName: suiteName) ?? .standard

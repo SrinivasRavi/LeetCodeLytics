@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @AppStorage("username") private var username = ""
+    @AppStorage("username", store: .appGroup) private var username = ""
 
     var body: some View {
         if username.isEmpty {
@@ -13,29 +13,32 @@ struct ContentView: View {
 }
 
 struct MainTabView: View {
+    @State private var selectedTab = 0
+
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             DashboardView()
-                .tabItem {
-                    Label("Dashboard", systemImage: "chart.bar.fill")
-                }
+                .tabItem { Label("Dashboard", systemImage: "chart.bar.fill") }
+                .tag(0)
 
             SubmissionsView()
-                .tabItem {
-                    Label("Submissions", systemImage: "list.bullet.clipboard")
-                }
+                .tabItem { Label("Submissions", systemImage: "list.bullet.clipboard") }
+                .tag(1)
 
             SkillsView()
-                .tabItem {
-                    Label("Skills", systemImage: "brain.head.profile")
-                }
+                .tabItem { Label("Skills", systemImage: "brain.head.profile") }
+                .tag(2)
 
             SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gear")
-                }
+                .tabItem { Label("Settings", systemImage: "gear") }
+                .tag(3)
         }
         .tint(Color(hex: "FFA116"))
         .preferredColorScheme(.dark)
+        .onOpenURL { url in
+            if url.scheme == "leetcodelytics" {
+                selectedTab = 0
+            }
+        }
     }
 }

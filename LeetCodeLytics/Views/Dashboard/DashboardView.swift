@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct DashboardView: View {
-    @AppStorage("username") private var username = ""
+    @AppStorage("username", store: .appGroup) private var username = ""
     @StateObject private var vm = DashboardViewModel()
     @State private var lastUpdatedText = ""
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SkillsView: View {
-    @AppStorage("username") private var username = ""
+    @AppStorage("username", store: .appGroup) private var username = ""
     @StateObject private var vm = SkillsViewModel()
 
     var body: some View {

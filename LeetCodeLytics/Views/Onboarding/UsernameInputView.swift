@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct UsernameInputView: View {
-    @AppStorage("username") private var username = ""
+    @AppStorage("username", store: .appGroup) private var username = ""
     @State private var inputText = ""
     @State private var isValidating = false
     @State private var errorMessage: String?

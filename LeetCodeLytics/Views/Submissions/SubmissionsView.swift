@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SubmissionsView: View {
-    @AppStorage("username") private var username = ""
+    @AppStorage("username", store: .appGroup) private var username = ""
     @StateObject private var vm = SubmissionsViewModel()
 
     var body: some View {

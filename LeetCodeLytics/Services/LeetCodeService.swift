@@ -62,8 +62,8 @@ final class LeetCodeService: LeetCodeServiceProtocol {
             forHTTPHeaderField: "User-Agent"
         )
 
-        let session = UserDefaults.standard.string(forKey: "leetcodeSession") ?? ""
-        let userCsrf = UserDefaults.standard.string(forKey: "csrfToken") ?? ""
+        let session = UserDefaults.appGroup.string(forKey: "leetcodeSession") ?? ""
+        let userCsrf = UserDefaults.appGroup.string(forKey: "csrfToken") ?? ""
 
         // Read csrftoken from shared cookie jar (set by bootstrapCSRF) if user hasn't provided one
         let jarCsrf = HTTPCookieStorage.shared
