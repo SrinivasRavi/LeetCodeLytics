@@ -9,9 +9,9 @@ programmatically. The user must be able to open the `.xcodeproj` and hit ⌘R wi
 
 ## Current State
 
-**Shipped: v2.6.0** (branch: `main`)
+**Shipped: v2.10.0** (branch: `main`)
 
-Widgets live. App + widget stable. 104 tests pass.
+Widgets live. App + widget stable. 106 tests pass.
 
 ---
 
@@ -53,6 +53,12 @@ UI fixes from hands-on testing: streak card layout, badge deduplication, pull-to
 - v2.5: Widget scheme removed from Xcode — prevents accidental widget-only deploy (always use `LeetCodeLytics` scheme)
 - v2.6: Audit fixes — Cancel button bug (logged user out), 4 dead model structs removed, static DateFormatter/Calendar in HeatmapGridView and BadgesView, SubmissionsView refreshable on all states
 
+### v2.7–v2.10 — Widget Stability ✅
+- v2.7: `WidgetData.fetchedAt`; cache-first `getTimeline` (skip network if cache < 30 min old)
+- v2.8: `widgetURL` moved inside view bodies; `containerBackground` sole modifier in each closure; small widget `.padding(8)`; `foregroundStyle` throughout; AstroLeet 2x/3x image slots filled
+- v2.9: Removed `Image("AstroLeet")` from all widget views — text/emoji-only MVP to reduce memory footprint
+- v2.10: **Root cause fix** — deleted `WidgetFetcher.swift`; widget extension now NEVER makes network calls. `getTimeline` reads only from App Group UserDefaults. Main app writes data and calls `WidgetCenter.shared.reloadAllTimelines()` on every Dashboard refresh. Eliminates OOM crash (which was the true cause of the "Please adopt containerBackground API" banner and grey placeholder).
+
 ---
 
 ## Development Standards
@@ -72,6 +78,8 @@ These rules exist because the same classes of bugs kept recurring. Each rule has
 
 ### WidgetKit
 - `.containerBackground(for: .widget)` **must** be applied in the `StaticConfiguration` content closure — NOT inside a view's `body`. WidgetKit scans the closure root; placement inside `body` is undetected and causes the "Please adopt containerBackground API" system overlay.
+- **The widget extension must NEVER make network calls.** Widget extensions have a hard ~30 MB memory budget. Three sequential GraphQL calls (profile + calendar + DCC) reliably exceed it, OOM-killing the extension. When the extension OOM-kills, iOS cannot get a rendered result and shows "Please adopt containerBackground API" (generic failure state) — which looks like a `containerBackground` API bug but is actually a memory crash. The correct architecture: main app fetches → writes `WidgetData` to App Group → calls `WidgetCenter.shared.reloadAllTimelines()`. Widget reads only from App Group.
+- **`widgetURL` must be applied inside the content view's `body`**, not in the `StaticConfiguration` closure. `containerBackground` must be the sole modifier in the closure.
 
 ### DateFormatter / Calendar / NumberFormatter
 - **Never** create `DateFormatter`, `Calendar`, `RelativeDateTimeFormatter`, or `NumberFormatter` inside a computed property, view `body`, or instance `let` property of a SwiftUI View

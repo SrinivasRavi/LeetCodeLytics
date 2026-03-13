@@ -7,40 +7,37 @@ struct LeetCodeEntry: TimelineEntry {
 }
 
 struct LeetCodeProvider: TimelineProvider {
+
+    // Called synchronously for the widget gallery placeholder.
+    // Must return immediately — never access network or slow I/O here.
     func placeholder(in context: Context) -> LeetCodeEntry {
         LeetCodeEntry(date: Date(), data: .placeholder)
     }
 
+    // Called for the widget gallery preview and when the widget is first added.
+    // Read from App Group — synchronous, instant.
     func getSnapshot(in context: Context, completion: @escaping (LeetCodeEntry) -> Void) {
-        let data = loadCached() ?? .placeholder
-        completion(LeetCodeEntry(date: Date(), data: data))
+        completion(LeetCodeEntry(date: Date(), data: loadCached() ?? .placeholder))
     }
 
+    // Called when WidgetKit needs a new timeline.
+    //
+    // Design: the widget NEVER makes its own network calls.
+    // The main app (DashboardViewModel.load) writes fresh WidgetData to the App Group
+    // and calls WidgetCenter.shared.reloadAllTimelines() on every Dashboard refresh.
+    // That reload triggers getTimeline immediately with up-to-date data.
+    //
+    // Why no network here: widget extensions have a hard ~30 MB memory budget.
+    // Three sequential GraphQL calls (profile + calendar + DCC) reliably exceed it
+    // for users with significant submission history — crashing the extension and
+    // causing iOS to show the "Please adopt containerBackground API" fallback.
     func getTimeline(in context: Context, completion: @escaping (Timeline<LeetCodeEntry>) -> Void) {
-        Task {
-            let now = Date()
-            let maxAge: TimeInterval = 30 * 60 // 30 minutes
-
-            // Use cached data if it was fetched recently — avoids network calls and
-            // stays well within the widget extension's ~30 MB memory budget.
-            let cached = loadCached()
-            let cacheIsFresh = cached?.fetchedAt.map { now.timeIntervalSince($0) < maxAge } ?? false
-
-            let data: WidgetData
-            if cacheIsFresh, let fresh = cached {
-                data = fresh
-            } else {
-                let fetched = await WidgetFetcher.fetch()
-                data = fetched ?? cached ?? .placeholder
-                if let encoded = try? JSONEncoder().encode(data) {
-                    UserDefaults(suiteName: "group.com.leetcodelytics.shared")?.set(encoded, forKey: "widgetData")
-                }
-            }
-
-            let entry = LeetCodeEntry(date: now, data: data)
-            let nextRefresh = Calendar.current.date(byAdding: .minute, value: 30, to: now)!
-            completion(Timeline(entries: [entry], policy: .after(nextRefresh)))
-        }
+        let entry = LeetCodeEntry(date: Date(), data: loadCached() ?? .placeholder)
+        // Check again in 15 min as a background fallback.
+        // The real refresh path is: app opens → DashboardViewModel writes App Group
+        // → WidgetCenter.shared.reloadAllTimelines() → getTimeline called immediately.
+        let nextRefresh = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
+        completion(Timeline(entries: [entry], policy: .after(nextRefresh)))
     }
 
     private func loadCached() -> WidgetData? {

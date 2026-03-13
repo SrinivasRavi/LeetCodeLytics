@@ -12,7 +12,6 @@
 		0A960C72D81C427E7A7AFCEA /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978492C53A4CF11DAE76BDEB /* UserProfile.swift */; };
 		0CD3CF219E992BE637C09939 /* SharedAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 790280535BDF4EA5FB1DAF03 /* SharedAssets.xcassets */; };
 		15AD69117D0671250AA04FF1 /* HeatmapGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 618BB55A3DD1ED16EBDAC152 /* HeatmapGridView.swift */; };
-		180CA55704A4F1441AC0288E /* WidgetFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F169B7529278FB7F054BD367 /* WidgetFetcher.swift */; };
 		18D1E0D81A1B59DEF4EB7955 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D745303C32094A541A27A4 /* AppGroup.swift */; };
 		1A0B262BE95875F8A97DE686 /* SubmissionsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4C19AC87A567787317A0FE /* SubmissionsViewModelTests.swift */; };
 		1AB08FABA4780B9F5B947955 /* LeetCodeServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB141D4B1A6D8AF6CD51774 /* LeetCodeServiceProtocol.swift */; };
@@ -146,7 +145,6 @@
 		DE6F9714FC7B58DC90A0DA19 /* WidgetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetData.swift; sourceTree = "<group>"; };
 		E2105C633CA3926840004D07 /* LeetCodeServiceExecuteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeetCodeServiceExecuteTests.swift; sourceTree = "<group>"; };
 		EB8C2F0D8BA25C6813291FA6 /* CacheServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheServiceTests.swift; sourceTree = "<group>"; };
-		F169B7529278FB7F054BD367 /* WidgetFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetFetcher.swift; sourceTree = "<group>"; };
 		F438D4D1ABA42D71A437279D /* SubmissionCalendarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionCalendarTests.swift; sourceTree = "<group>"; };
 		FA312EF7A00BA6F40AE8F712 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		FD5EE5CA3A07A94EC5DF7F81 /* MockLeetCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLeetCodeService.swift; sourceTree = "<group>"; };
@@ -203,7 +201,6 @@
 				139A2E343CA16683AB177C86 /* LeetCodeLyticsWidget.entitlements */,
 				B7B221AD80EEB4C9064AFA41 /* LeetCodeLyticsWidget.swift */,
 				6F5B3AB78F430D1F1084BA64 /* Provider.swift */,
-				F169B7529278FB7F054BD367 /* WidgetFetcher.swift */,
 				AADA60A57310D314E559746A /* WidgetViews.swift */,
 			);
 			path = LeetCodeLyticsWidget;
@@ -555,7 +552,6 @@
 				BB249EBB1603BEAD119E19C5 /* StreakCalculator.swift in Sources */,
 				A46E586A7B8303F347E52C17 /* SubmissionCalendar.swift in Sources */,
 				EEEC76DAE5CFBB64A345A1C8 /* WidgetData.swift in Sources */,
-				180CA55704A4F1441AC0288E /* WidgetFetcher.swift in Sources */,
 				0A2AB8F05F5B1429CA895C1C /* WidgetViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -587,7 +583,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.9.0;
+				MARKETING_VERSION = 2.10.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.leetcodelytics.app.widget;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -606,7 +602,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.9.0;
+				MARKETING_VERSION = 2.10.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.leetcodelytics.app.widget;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -684,7 +680,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.9.0;
+				MARKETING_VERSION = 2.10.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.leetcodelytics.app;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -802,7 +798,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.9.0;
+				MARKETING_VERSION = 2.10.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.leetcodelytics.app;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
