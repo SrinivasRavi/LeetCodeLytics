@@ -125,8 +125,8 @@ private struct Last52WeeksCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Last 52 weeks")
-                .font(.caption)
-                .foregroundColor(.gray)
+                .font(.headline)
+                .foregroundColor(.white)
 
             HStack(spacing: 0) {
                 StreakItem(value: maxStreak, icon: "🏆", label: "Max Streak")

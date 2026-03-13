@@ -6,10 +6,16 @@ struct CurrentStreakCard: View {
     let anysolveStreak: Int
 
     var body: some View {
-        HStack(spacing: 0) {
-            StreakItem(value: dccStreak, icon: "🔥", label: "Daily Question Streak")
-            Divider().background(Color.gray.opacity(0.3)).frame(height: 50)
-            StreakItem(value: anysolveStreak, icon: "⚡", label: "Solved Streak")
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Streaks")
+                .font(.headline)
+                .foregroundColor(.white)
+
+            HStack(spacing: 0) {
+                StreakItem(value: dccStreak, icon: "🔥", label: "Daily Question")
+                Divider().background(Color.gray.opacity(0.3)).frame(height: 50)
+                StreakItem(value: anysolveStreak, icon: "⚡", label: "Solved (any question)")
+            }
         }
         .padding()
         .background(Color(UIColor.secondarySystemBackground))
