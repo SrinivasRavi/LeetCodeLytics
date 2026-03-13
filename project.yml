@@ -22,7 +22,7 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
         CURRENT_PROJECT_VERSION: 1
-        MARKETING_VERSION: 1.6.0
+        MARKETING_VERSION: 1.6.1
         ENABLE_TESTABILITY: YES
 
   LeetCodeLyticsTests:
