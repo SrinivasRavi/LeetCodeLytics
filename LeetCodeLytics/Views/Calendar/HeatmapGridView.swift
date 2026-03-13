@@ -1,5 +1,11 @@
 import SwiftUI
 
+private let heatmapDateFormatter: DateFormatter = {
+    let df = DateFormatter()
+    df.dateStyle = .medium
+    return df
+}()
+
 struct HeatmapGridView: View {
     let calendar: SubmissionCalendar
     @State private var selectedDate: Date?
@@ -102,9 +108,7 @@ struct HeatmapGridView: View {
             }
 
             if let date = selectedDate, let count = selectedCount {
-                let df = DateFormatter()
-                let _ = { df.dateStyle = .medium }()
-                Text("\(count) solve\(count == 1 ? "" : "s") on \(df.string(from: date))")
+                Text("\(count) solve\(count == 1 ? "" : "s") on \(heatmapDateFormatter.string(from: date))")
                     .font(.caption)
                     .foregroundColor(.gray)
                     .padding(.top, 4)

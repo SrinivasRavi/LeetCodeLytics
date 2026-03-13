@@ -7,12 +7,16 @@ final class SubmissionsViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     private let service: LeetCodeServiceProtocol
+    private var activeFetch = false
 
     init(service: LeetCodeServiceProtocol = LeetCodeService.shared) {
         self.service = service
     }
 
     func load(username: String) async {
+        guard !activeFetch else { return }
+        activeFetch = true
+        defer { activeFetch = false }
         let cacheKey = "submissions_\(username)"
 
         // Show cached data immediately if available

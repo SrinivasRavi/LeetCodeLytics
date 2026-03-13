@@ -9,7 +9,7 @@ programmatically. The user must be able to open the `.xcodeproj` and hit ⌘R wi
 
 ## Current State
 
-**Shipped: v1.5.5** (branch: `main`)
+**Shipped: v1.6.0** (branch: `main`)
 
 All v1.x features are complete and working on device. The app is stable and ready for V2.0 development.
 
@@ -34,8 +34,18 @@ UI fixes from hands-on testing: streak card layout, badge deduplication, pull-to
 - v1.5.4: Pull-to-refresh cancelled error suppressed (partial fix)
 - v1.5.5: Pull-to-refresh fully fixed via unstructured Task + `withCheckedContinuation`; full test suite added (77 tests)
 
+### v1.6.0 — Performance Cleanup & Dead Code Removal ✅
+- Added `activeFetch` guard to all three ViewModels (Dashboard, Submissions, Skills) — prevents Task stacking on rapid tab switching (fixes memory growth)
+- Deleted dead Contest system: `ContestView.swift`, `ContestViewModel.swift`, `ContestRanking.swift`, `fetchContestRanking/History` from service
+- Deleted dead Calendar view/viewmodel: `CalendarView.swift`, `CalendarViewModel.swift` (merged into Dashboard in v1.2)
+- Moved tag sorting out of `SkillsView` body into `SkillsViewModel` computed properties (`topAdvanced/Intermediate/Fundamental`)
+- `HeatmapGridView`: static `DateFormatter` (was recreated every render); fixed dead closure no-op
+- `SettingsView`: version string now reads from `Bundle.main` — no more manual version bump in UI
+- Removed dead `statusColor: String` from `RecentSubmission` (duplicate of `SkillsView` color mapping)
+- Removed unused `import Charts` from `SkillsView`
+
 ### Version 2.0 — Widgets (next)
-Add widget extension on top of v1.5.5.
+Add widget extension on top of v1.6.0.
 - Migrate `CacheService` suiteName from nil → `group.com.leetcodelytics.shared` (one-line change)
 - Add `LeetCodeLytics.entitlements` + `LeetCodeLyticsWidget.entitlements` with App Groups
 - Add `Shared/` folder (move `SubmissionCalendar.swift`, `StreakCalculator.swift` there)
@@ -89,7 +99,7 @@ DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer \
 
 ---
 
-## Directory Layout — Current (v1.5.5)
+## Directory Layout — Current (v1.6.0)
 
 ```
 LeetCodeLytics/                          ← repo root
@@ -103,7 +113,6 @@ LeetCodeLytics/                          ← repo root
                                             UserProfileInfo, UserBadge (id: String?), ProblemCount
       StreakData.swift                    ← StreakData, UserCalendarWrapper, StreakCounterResponse
       RecentSubmission.swift
-      ContestRanking.swift               ← models kept but Contest tab removed from UI
       LanguageStats.swift                ← LanguageStat, TagStat, TagProblemCounts
       SubmissionCalendar.swift           ← double-decode helper (JSON string → [Int: Int])
     Services/
@@ -112,10 +121,9 @@ LeetCodeLytics/                          ← repo root
       StreakCalculator.swift             ← any-solve streak from calendar timestamps (UTC)
       CacheService.swift                 ← UserDefaults-backed, suiteName = nil (→ App Groups in V2.0)
     ViewModels/
-      DashboardViewModel.swift           ← unstructured Task + withCheckedContinuation for refresh
-      CalendarViewModel.swift
-      SubmissionsViewModel.swift
-      SkillsViewModel.swift
+      DashboardViewModel.swift           ← activeFetch guard + unstructured Task + withCheckedContinuation
+      SubmissionsViewModel.swift         ← activeFetch guard
+      SkillsViewModel.swift              ← activeFetch guard; exposes topAdvanced/Intermediate/Fundamental
     Views/
       Onboarding/UsernameInputView.swift
       Dashboard/DashboardView.swift
@@ -123,11 +131,10 @@ LeetCodeLytics/                          ← repo root
       Dashboard/StreakCard.swift
       Dashboard/ProblemStatsCard.swift
       Dashboard/AcceptanceRateView.swift
-      Calendar/CalendarView.swift
-      Calendar/HeatmapGridView.swift
+      Calendar/HeatmapGridView.swift     ← static DateFormatter (file-level)
       Submissions/SubmissionsView.swift
       Skills/SkillsView.swift
-      Settings/SettingsView.swift        ← version string here; update on every version bump
+      Settings/SettingsView.swift        ← version read from Bundle.main
   LeetCodeLyticsTests/
     Mocks/
       MockLeetCodeService.swift          ← configurable mock + fixture builders
@@ -365,10 +372,11 @@ query skillStats($username: String!) {
 ## V2.0 Preparation Checklist
 
 Before starting V2.0:
-- [ ] All 77 tests pass
-- [ ] App verified working on device (v1.5.5)
-- [ ] `CacheService.suiteName` is nil (ready for one-line change to App Groups)
-- [ ] `SubmissionCalendar` and `StreakCalculator` have no UIKit/SwiftUI imports
+- [x] All 77 tests pass (v1.6.0)
+- [ ] App verified working on device (v1.6.0)
+- [x] `CacheService.suiteName` is nil (ready for one-line change to App Groups)
+- [x] `SubmissionCalendar` and `StreakCalculator` have no UIKit/SwiftUI imports
+- [x] Dead code removed (Contest system, Calendar VM/View)
 
 ---
 

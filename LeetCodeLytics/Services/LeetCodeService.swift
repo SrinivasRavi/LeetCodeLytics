@@ -190,45 +190,6 @@ final class LeetCodeService: LeetCodeServiceProtocol {
         )
     }
 
-    func fetchContestRanking(username: String) async throws -> ContestRanking? {
-        let query = """
-        query userContestRanking($username: String!) {
-          userContestRankingInfo(username: $username) {
-            rating globalRanking localRanking topPercentage
-            badge { name icon }
-          }
-        }
-        """
-        return try await execute(
-            query: query,
-            variables: ["username": username],
-            responseKey: "userContestRankingInfo"
-        )
-    }
-
-    func fetchContestHistory(username: String) async throws -> [ContestHistory] {
-        let query = """
-        query userContestHistory($username: String!) {
-          userContestRankingInfo(username: $username) {
-            contestHistory {
-              attended trendDirection problemsSolved totalProblems
-              finishTimeInSeconds rating ranking
-              contest { title startTime }
-            }
-          }
-        }
-        """
-        struct HistoryWrapper: Decodable {
-            let contestHistory: [ContestHistory]?
-        }
-        let wrapper: HistoryWrapper = try await execute(
-            query: query,
-            variables: ["username": username],
-            responseKey: "userContestRankingInfo"
-        )
-        return wrapper.contestHistory ?? []
-    }
-
     func fetchLanguageStats(username: String) async throws -> [LanguageStat] {
         let query = """
         query languageStats($username: String!) {

@@ -1,5 +1,4 @@
 import SwiftUI
-import Charts
 
 struct SkillsView: View {
     @AppStorage("username") private var username = ""
@@ -12,16 +11,16 @@ struct SkillsView: View {
                 if vm.isLoading && vm.tagCounts == nil {
                     ProgressView("Loading...")
                         .frame(maxWidth: .infinity, minHeight: 300)
-                } else if let tags = vm.tagCounts {
+                } else if vm.tagCounts != nil {
                     VStack(spacing: 16) {
-                        if !tags.advanced.isEmpty {
-                            TagSection(title: "Advanced", tags: Array(tags.advanced.sorted { $0.problemsSolved > $1.problemsSolved }.prefix(10)), color: .red)
+                        if !vm.topAdvanced.isEmpty {
+                            TagSection(title: "Advanced", tags: vm.topAdvanced, color: .red)
                         }
-                        if !tags.intermediate.isEmpty {
-                            TagSection(title: "Intermediate", tags: Array(tags.intermediate.sorted { $0.problemsSolved > $1.problemsSolved }.prefix(10)), color: .orange)
+                        if !vm.topIntermediate.isEmpty {
+                            TagSection(title: "Intermediate", tags: vm.topIntermediate, color: .orange)
                         }
-                        if !tags.fundamental.isEmpty {
-                            TagSection(title: "Fundamental", tags: Array(tags.fundamental.sorted { $0.problemsSolved > $1.problemsSolved }.prefix(10)), color: .green)
+                        if !vm.topFundamental.isEmpty {
+                            TagSection(title: "Fundamental", tags: vm.topFundamental, color: .green)
                         }
                         if !vm.languageStats.isEmpty {
                             LanguageSection(languages: Array(vm.languageStats.prefix(10)))

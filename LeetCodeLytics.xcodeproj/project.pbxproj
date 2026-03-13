@@ -8,18 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		03660B3E8AEF927A3DD4B435 /* MockURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD725F36267A1AEF24F3ADCF /* MockURLProtocol.swift */; };
-		05A00614A239F1C28FECDDCF /* ContestViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7D4D5A84BAA05278947D128 /* ContestViewModel.swift */; };
 		0A960C72D81C427E7A7AFCEA /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978492C53A4CF11DAE76BDEB /* UserProfile.swift */; };
 		15AD69117D0671250AA04FF1 /* HeatmapGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 618BB55A3DD1ED16EBDAC152 /* HeatmapGridView.swift */; };
 		19D79B0EA8F6DE18EA96BF9A /* StreakCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF583E3ED3085CDFAB381F /* StreakCalculator.swift */; };
 		1A0B262BE95875F8A97DE686 /* SubmissionsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4C19AC87A567787317A0FE /* SubmissionsViewModelTests.swift */; };
 		1AB08FABA4780B9F5B947955 /* LeetCodeServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB141D4B1A6D8AF6CD51774 /* LeetCodeServiceProtocol.swift */; };
 		239FC7A6D1E1BA1578BAF5B5 /* SkillsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD1EA93B40F3BEFEFFE6591 /* SkillsView.swift */; };
-		2BFD4E4A3F23C722B3E2299D /* ContestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45E5D060FC0D963AE2E79D82 /* ContestView.swift */; };
 		370278EAEEF9C8C954AAD9D5 /* CacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604ED9B40827E40C1293A725 /* CacheService.swift */; };
 		374BAD2284E978AD0F0DF276 /* StreakData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114FBE444C138C0AA60ED04F /* StreakData.swift */; };
 		402BC5C80F413D669749CF63 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D980A3C4B9016AFD6FF0571 /* ProfileHeaderView.swift */; };
-		4C10F8EC8E6929067DF1AC68 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0393B1B8E01097B4FCA74BE6 /* CalendarViewModel.swift */; };
 		5F9CD1FA3A5C3F3A438C6A65 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985151837D8C869E394F8C49 /* ContentView.swift */; };
 		5FBDFB1DB417E89D714535E7 /* LeetCodeServiceExecuteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2105C633CA3926840004D07 /* LeetCodeServiceExecuteTests.swift */; };
 		6F7C7F242359D5758FF0C059 /* StreakCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213A365B6947F6A26B7D3CE2 /* StreakCalculatorTests.swift */; };
@@ -36,11 +33,9 @@
 		C09E36F997EF804513873D82 /* AcceptanceRateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75D78A30AFB4D4823052140F /* AcceptanceRateView.swift */; };
 		C4112AB635FD56F134573910 /* SubmissionCalendarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F438D4D1ABA42D71A437279D /* SubmissionCalendarTests.swift */; };
 		CBADC14635EB9B838B4F7FD1 /* CacheServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8C2F0D8BA25C6813291FA6 /* CacheServiceTests.swift */; };
-		D14967207C3CCB9C61BB8178 /* ContestRanking.swift in Sources */ = {isa = PBXBuildFile; fileRef = F211042EE44A22014FB1C46D /* ContestRanking.swift */; };
 		D7AF01E816776FE2812C3C3E /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5586271513FCF8E48B7683D5 /* DashboardView.swift */; };
 		DCB75E1FE0296DD1E0714928 /* LeetCodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0846E96775F74E82CC9F504A /* LeetCodeService.swift */; };
 		DE493B2F299518150E9BE7CE /* ModelDecodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7712A1E2D71F2AD5694FD624 /* ModelDecodeTests.swift */; };
-		DE66C2EF4CD39FF0A819FF45 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6AFF893AB40F8008E7C1EC /* CalendarView.swift */; };
 		E827EF765786C7FDC42762A3 /* MockLeetCodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD5EE5CA3A07A94EC5DF7F81 /* MockLeetCodeService.swift */; };
 		EB8DCA0747E14F760E835FCE /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA312EF7A00BA6F40AE8F712 /* DashboardViewModel.swift */; };
 		EDADA1617D66437B7BFD83B7 /* UsernameInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB6CE1D675F3335287CB387 /* UsernameInputView.swift */; };
@@ -59,7 +54,6 @@
 
 /* Begin PBXFileReference section */
 		00BF583E3ED3085CDFAB381F /* StreakCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakCalculator.swift; sourceTree = "<group>"; };
-		0393B1B8E01097B4FCA74BE6 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		03FE75760822B6EE4A23B6B4 /* ProblemStatsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProblemStatsCard.swift; sourceTree = "<group>"; };
 		0846E96775F74E82CC9F504A /* LeetCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeetCodeService.swift; sourceTree = "<group>"; };
 		0CD1EA93B40F3BEFEFFE6591 /* SkillsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillsView.swift; sourceTree = "<group>"; };
@@ -67,7 +61,6 @@
 		213A365B6947F6A26B7D3CE2 /* StreakCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakCalculatorTests.swift; sourceTree = "<group>"; };
 		29ED7F611F6F56F74A131043 /* SubmissionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionsViewModel.swift; sourceTree = "<group>"; };
 		2EFF6655AA59550F7AD5EF5A /* RecentSubmission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSubmission.swift; sourceTree = "<group>"; };
-		45E5D060FC0D963AE2E79D82 /* ContestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContestView.swift; sourceTree = "<group>"; };
 		4CB6CE1D675F3335287CB387 /* UsernameInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsernameInputView.swift; sourceTree = "<group>"; };
 		4F5737B1A9BE662B31710637 /* LeetCodeLyticsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeetCodeLyticsApp.swift; sourceTree = "<group>"; };
 		5586271513FCF8E48B7683D5 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
@@ -89,13 +82,10 @@
 		C0CEF701BD6752171DA05E33 /* SkillsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillsViewModel.swift; sourceTree = "<group>"; };
 		C27C91695A5C4F1B8098B700 /* StreakCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakCard.swift; sourceTree = "<group>"; };
 		CCBC3F9BDD59DCCF39A14E5F /* SubmissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionsView.swift; sourceTree = "<group>"; };
-		DB6AFF893AB40F8008E7C1EC /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		E2105C633CA3926840004D07 /* LeetCodeServiceExecuteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeetCodeServiceExecuteTests.swift; sourceTree = "<group>"; };
 		E6AB9FA1876BA182D40B69CA /* SubmissionCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionCalendar.swift; sourceTree = "<group>"; };
 		EB8C2F0D8BA25C6813291FA6 /* CacheServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheServiceTests.swift; sourceTree = "<group>"; };
-		F211042EE44A22014FB1C46D /* ContestRanking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContestRanking.swift; sourceTree = "<group>"; };
 		F438D4D1ABA42D71A437279D /* SubmissionCalendarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionCalendarTests.swift; sourceTree = "<group>"; };
-		F7D4D5A84BAA05278947D128 /* ContestViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContestViewModel.swift; sourceTree = "<group>"; };
 		FA312EF7A00BA6F40AE8F712 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		FD5EE5CA3A07A94EC5DF7F81 /* MockLeetCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLeetCodeService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -166,14 +156,6 @@
 			path = Submissions;
 			sourceTree = "<group>";
 		};
-		37245566A8614552D3EDAF56 /* Contest */ = {
-			isa = PBXGroup;
-			children = (
-				45E5D060FC0D963AE2E79D82 /* ContestView.swift */,
-			);
-			path = Contest;
-			sourceTree = "<group>";
-		};
 		3794C94BAB1ED2CCE52F32A4 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
@@ -186,8 +168,6 @@
 		5AED65B81D9FA87F13089FE7 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				0393B1B8E01097B4FCA74BE6 /* CalendarViewModel.swift */,
-				F7D4D5A84BAA05278947D128 /* ContestViewModel.swift */,
 				FA312EF7A00BA6F40AE8F712 /* DashboardViewModel.swift */,
 				C0CEF701BD6752171DA05E33 /* SkillsViewModel.swift */,
 				29ED7F611F6F56F74A131043 /* SubmissionsViewModel.swift */,
@@ -198,7 +178,6 @@
 		642FAE2172B596CA0C5BA35E /* Calendar */ = {
 			isa = PBXGroup;
 			children = (
-				DB6AFF893AB40F8008E7C1EC /* CalendarView.swift */,
 				618BB55A3DD1ED16EBDAC152 /* HeatmapGridView.swift */,
 			);
 			path = Calendar;
@@ -243,7 +222,6 @@
 		CD5D11A2010AEF3E5E8F3646 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				F211042EE44A22014FB1C46D /* ContestRanking.swift */,
 				7B2528FC72FE6E19DFC96FED /* LanguageStats.swift */,
 				2EFF6655AA59550F7AD5EF5A /* RecentSubmission.swift */,
 				114FBE444C138C0AA60ED04F /* StreakData.swift */,
@@ -265,7 +243,6 @@
 			isa = PBXGroup;
 			children = (
 				642FAE2172B596CA0C5BA35E /* Calendar */,
-				37245566A8614552D3EDAF56 /* Contest */,
 				1350C888682685E4B8A9ACD0 /* Dashboard */,
 				E55DA6AB0A13035FB14E4F49 /* Onboarding */,
 				1D34C9378E21E4DD7762E711 /* Settings */,
@@ -365,12 +342,7 @@
 			files = (
 				C09E36F997EF804513873D82 /* AcceptanceRateView.swift in Sources */,
 				370278EAEEF9C8C954AAD9D5 /* CacheService.swift in Sources */,
-				DE66C2EF4CD39FF0A819FF45 /* CalendarView.swift in Sources */,
-				4C10F8EC8E6929067DF1AC68 /* CalendarViewModel.swift in Sources */,
 				5F9CD1FA3A5C3F3A438C6A65 /* ContentView.swift in Sources */,
-				D14967207C3CCB9C61BB8178 /* ContestRanking.swift in Sources */,
-				2BFD4E4A3F23C722B3E2299D /* ContestView.swift in Sources */,
-				05A00614A239F1C28FECDDCF /* ContestViewModel.swift in Sources */,
 				D7AF01E816776FE2812C3C3E /* DashboardView.swift in Sources */,
 				EB8DCA0747E14F760E835FCE /* DashboardViewModel.swift in Sources */,
 				15AD69117D0671250AA04FF1 /* HeatmapGridView.swift in Sources */,
@@ -477,7 +449,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.leetcodelytics.app;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -596,7 +568,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.leetcodelytics.app;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

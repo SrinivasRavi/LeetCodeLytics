@@ -8,12 +8,20 @@ final class SkillsViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     private let service: LeetCodeServiceProtocol
+    private var activeFetch = false
 
     init(service: LeetCodeServiceProtocol = LeetCodeService.shared) {
         self.service = service
     }
 
+    var topAdvanced: [TagStat] { Array((tagCounts?.advanced ?? []).sorted { $0.problemsSolved > $1.problemsSolved }.prefix(10)) }
+    var topIntermediate: [TagStat] { Array((tagCounts?.intermediate ?? []).sorted { $0.problemsSolved > $1.problemsSolved }.prefix(10)) }
+    var topFundamental: [TagStat] { Array((tagCounts?.fundamental ?? []).sorted { $0.problemsSolved > $1.problemsSolved }.prefix(10)) }
+
     func load(username: String) async {
+        guard !activeFetch else { return }
+        activeFetch = true
+        defer { activeFetch = false }
         let cacheKey = "skills_\(username)"
 
         // Show cached data immediately if available

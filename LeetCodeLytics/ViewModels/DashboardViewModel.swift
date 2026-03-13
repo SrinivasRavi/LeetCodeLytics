@@ -12,6 +12,7 @@ final class DashboardViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     private let service: LeetCodeServiceProtocol
+    private var activeFetch = false
 
     init(service: LeetCodeServiceProtocol = LeetCodeService.shared) {
         self.service = service
@@ -37,6 +38,9 @@ final class DashboardViewModel: ObservableObject {
     }
 
     func load(username: String) async {
+        guard !activeFetch else { return }
+        activeFetch = true
+        defer { activeFetch = false }
         let cacheKey = "dashboard_\(username)"
 
         // Show cached data immediately if available

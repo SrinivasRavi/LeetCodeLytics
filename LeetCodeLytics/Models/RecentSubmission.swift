@@ -33,14 +33,4 @@ struct RecentSubmission: Codable, Identifiable {
         }
     }
 
-    var statusColor: String {
-        switch statusDisplay {
-        case "Accepted": return "green"
-        case "Wrong Answer": return "red"
-        case "Time Limit Exceeded": return "orange"
-        case "Runtime Error": return "red"
-        case "Compile Error": return "red"
-        default: return "gray"
-        }
-    }
 }
