@@ -7,6 +7,7 @@ struct SolvedStreakWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "SolvedStreak", provider: LeetCodeProvider()) { entry in
             SmallSolvedWidgetView(entry: entry)
+                .containerBackground(Color.black, for: .widget)
                 .widgetURL(URL(string: "leetcodelytics://dashboard"))
         }
         .configurationDisplayName("Solved Streak")
@@ -21,6 +22,7 @@ struct DCCStreakWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "DCCStreak", provider: LeetCodeProvider()) { entry in
             SmallDCCWidgetView(entry: entry)
+                .containerBackground(Color.black, for: .widget)
                 .widgetURL(URL(string: "leetcodelytics://dashboard"))
         }
         .configurationDisplayName("Daily Question Streak")
@@ -35,6 +37,7 @@ struct LeetCodeMediumWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "LeetCodeMedium", provider: LeetCodeProvider()) { entry in
             MediumWidgetView(entry: entry)
+                .containerBackground(Color.black, for: .widget)
                 .widgetURL(URL(string: "leetcodelytics://dashboard"))
         }
         .configurationDisplayName("LeetCodeLytics")
@@ -49,6 +52,7 @@ struct LeetCodeLargeWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "LeetCodeLarge", provider: LeetCodeProvider()) { entry in
             LargeWidgetView(entry: entry)
+                .containerBackground(Color.black, for: .widget)
                 .widgetURL(URL(string: "leetcodelytics://dashboard"))
         }
         .configurationDisplayName("LeetCodeLytics")

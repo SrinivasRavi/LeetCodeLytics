@@ -23,7 +23,6 @@ struct SmallSolvedWidgetView: View {
                 .foregroundColor(.gray)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .containerBackground(Color.black, for: .widget)
     }
 }
 
@@ -49,7 +48,6 @@ struct SmallDCCWidgetView: View {
                 .foregroundColor(.gray)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .containerBackground(Color.black, for: .widget)
     }
 }
 
@@ -81,7 +79,6 @@ struct MediumWidgetView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .containerBackground(Color.black, for: .widget)
     }
 }
 
@@ -123,7 +120,6 @@ struct LargeWidgetView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .containerBackground(Color.black, for: .widget)
     }
 }
 
