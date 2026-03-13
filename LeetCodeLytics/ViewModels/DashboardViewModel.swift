@@ -44,46 +44,50 @@ final class DashboardViewModel: ObservableObject {
         isLoading = profile == nil
         errorMessage = nil
 
-        async let profileTask = service.fetchUserProfile(username: username)
-        async let questionsTask = service.fetchAllQuestionsCount()
-        async let calendarTask = service.fetchCalendar(username: username)
+        // Run network work in an unstructured Task so it can't be cancelled by
+        // the caller (e.g. SwiftUI's .refreshable task). withCheckedContinuation
+        // keeps load() suspended — and the refresh spinner alive — until the
+        // inner Task actually finishes.
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            Task { @MainActor in
+                defer { continuation.resume() }
 
-        do {
-            let (fetchedProfile, fetchedQuestions, fetchedCalendar) =
-                try await (profileTask, questionsTask, calendarTask)
-            profile = fetchedProfile
-            allQuestionsCount = fetchedQuestions
-            streakData = fetchedCalendar
-            let cal = SubmissionCalendar(jsonString: fetchedCalendar.submissionCalendar)
-            submissionCalendar = cal
-            anysolveStreak = StreakCalculator.computeStreak(from: cal)
+                async let profileTask = self.service.fetchUserProfile(username: username)
+                async let questionsTask = self.service.fetchAllQuestionsCount()
+                async let calendarTask = self.service.fetchCalendar(username: username)
 
-            let cache = DashboardCache(
-                profile: fetchedProfile,
-                allQuestionsCount: fetchedQuestions,
-                streakData: fetchedCalendar,
-                dccStreak: dccStreak,
-                anysolveStreak: anysolveStreak
-            )
-            CacheService.save(cache, key: cacheKey)
-            CacheService.saveTimestamp(for: cacheKey)
-            UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastUpdated")
-        } catch {
-            let isCancelled = (error as? URLError)?.code == .cancelled || error is CancellationError
-            if !isCancelled {
-                errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
+                do {
+                    let (p, q, c) = try await (profileTask, questionsTask, calendarTask)
+                    self.profile = p
+                    self.allQuestionsCount = q
+                    self.streakData = c
+                    let cal = SubmissionCalendar(jsonString: c.submissionCalendar)
+                    self.submissionCalendar = cal
+                    self.anysolveStreak = StreakCalculator.computeStreak(from: cal)
+
+                    let cache = DashboardCache(
+                        profile: p,
+                        allQuestionsCount: q,
+                        streakData: c,
+                        dccStreak: self.dccStreak,
+                        anysolveStreak: self.anysolveStreak
+                    )
+                    CacheService.save(cache, key: cacheKey)
+                    CacheService.saveTimestamp(for: cacheKey)
+                    UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastUpdated")
+                } catch {
+                    self.errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
+                }
+
+                // DCC streak — requires auth; preserve existing value on failure
+                do {
+                    let streak = try await self.service.fetchStreakCounter()
+                    self.dccStreak = streak.streakCount
+                } catch {}
+
+                self.isLoading = false
             }
         }
-
-        // DCC streak — requires auth; fail silently if not available; preserve existing value on failure
-        do {
-            let streak = try await service.fetchStreakCounter()
-            dccStreak = streak.streakCount
-        } catch {
-            // leave dccStreak as-is (cached value remains visible)
-        }
-
-        isLoading = false
     }
 
     private func apply(_ cache: DashboardCache) {
