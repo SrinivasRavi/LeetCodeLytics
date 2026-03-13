@@ -7,18 +7,13 @@ struct SmallSolvedWidgetView: View {
     let entry: LeetCodeEntry
 
     var body: some View {
-        VStack(spacing: 8) {
-            Image("AstroLeet")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 64, height: 64)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-
-            Text("⚡ \(entry.data.anysolveStreak) days")
-                .font(.system(size: 16, weight: .bold))
+        VStack(spacing: 6) {
+            Text("⚡")
+                .font(.system(size: 34))
+            Text("\(entry.data.anysolveStreak)")
+                .font(.system(size: 30, weight: .bold, design: .rounded))
                 .foregroundStyle(Color.white)
-
-            Text("Solved")
+            Text("days solved")
                 .font(.caption2)
                 .foregroundStyle(Color(white: 0.6))
         }
@@ -34,18 +29,13 @@ struct SmallDCCWidgetView: View {
     let entry: LeetCodeEntry
 
     var body: some View {
-        VStack(spacing: 8) {
-            Image("AstroLeet")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 64, height: 64)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-
-            Text("🔥 \(entry.data.dccStreak) days")
-                .font(.system(size: 16, weight: .bold))
+        VStack(spacing: 6) {
+            Text("🔥")
+                .font(.system(size: 34))
+            Text("\(entry.data.dccStreak)")
+                .font(.system(size: 30, weight: .bold, design: .rounded))
                 .foregroundStyle(Color.white)
-
-            Text("Daily Question")
+            Text("daily streak")
                 .font(.caption2)
                 .foregroundStyle(Color(white: 0.6))
         }
@@ -61,28 +51,30 @@ struct MediumWidgetView: View {
     let entry: LeetCodeEntry
 
     var body: some View {
-        HStack(spacing: 16) {
-            Image("AstroLeet")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 80, height: 80)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+        HStack(spacing: 0) {
+            StreakPill(icon: "⚡", value: entry.data.anysolveStreak, label: "Solved")
+                .frame(maxWidth: .infinity)
 
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 20) {
-                    StreakPill(icon: "⚡", value: entry.data.anysolveStreak, label: "Solved")
-                    StreakPill(icon: "🔥", value: entry.data.dccStreak, label: "Daily Q")
-                }
+            Divider()
+                .background(Color(white: 0.3))
+                .frame(height: 50)
 
-                HStack(spacing: 12) {
-                    DifficultyDot(label: "E", value: entry.data.easySolved, color: .green)
-                    DifficultyDot(label: "M", value: entry.data.mediumSolved, color: .orange)
-                    DifficultyDot(label: "H", value: entry.data.hardSolved, color: .red)
-                }
+            StreakPill(icon: "🔥", value: entry.data.dccStreak, label: "Daily Q")
+                .frame(maxWidth: .infinity)
+
+            Divider()
+                .background(Color(white: 0.3))
+                .frame(height: 50)
+
+            VStack(spacing: 4) {
+                DifficultyDot(label: "E", value: entry.data.easySolved, color: .green)
+                DifficultyDot(label: "M", value: entry.data.mediumSolved, color: .orange)
+                DifficultyDot(label: "H", value: entry.data.hardSolved, color: .red)
             }
+            .frame(maxWidth: .infinity)
         }
         .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .widgetURL(URL(string: "leetcodelytics://dashboard"))
     }
 }
@@ -94,28 +86,20 @@ struct LargeWidgetView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Same as medium top section
-            HStack(spacing: 16) {
-                Image("AstroLeet")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 72, height: 72)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
-
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 20) {
-                        StreakPill(icon: "⚡", value: entry.data.anysolveStreak, label: "Solved")
-                        StreakPill(icon: "🔥", value: entry.data.dccStreak, label: "Daily Q")
-                    }
-                    HStack(spacing: 12) {
-                        DifficultyDot(label: "E", value: entry.data.easySolved, color: .green)
-                        DifficultyDot(label: "M", value: entry.data.mediumSolved, color: .orange)
-                        DifficultyDot(label: "H", value: entry.data.hardSolved, color: .red)
-                    }
-                }
+            HStack(spacing: 0) {
+                StreakPill(icon: "⚡", value: entry.data.anysolveStreak, label: "Solved")
+                    .frame(maxWidth: .infinity)
+                StreakPill(icon: "🔥", value: entry.data.dccStreak, label: "Daily Q")
+                    .frame(maxWidth: .infinity)
             }
 
-            Divider().background(Color.gray.opacity(0.3))
+            HStack(spacing: 16) {
+                DifficultyDot(label: "E", value: entry.data.easySolved, color: .green)
+                DifficultyDot(label: "M", value: entry.data.mediumSolved, color: .orange)
+                DifficultyDot(label: "H", value: entry.data.hardSolved, color: .red)
+            }
+
+            Divider().background(Color(white: 0.3))
 
             Text("Activity")
                 .font(.caption)
@@ -138,8 +122,10 @@ private struct StreakPill: View {
 
     var body: some View {
         VStack(spacing: 2) {
-            Text("\(icon) \(value)")
-                .font(.system(size: 15, weight: .bold))
+            Text(icon)
+                .font(.system(size: 20))
+            Text("\(value)")
+                .font(.system(size: 22, weight: .bold, design: .rounded))
                 .foregroundStyle(Color.white)
             Text(label)
                 .font(.system(size: 10))
