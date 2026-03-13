@@ -40,7 +40,8 @@ enum WidgetFetcher {
             easySolved: counts.easy,
             mediumSolved: counts.medium,
             hardSolved: counts.hard,
-            recentCalendar: recentCal
+            recentCalendar: recentCal,
+            fetchedAt: Date()
         )
     }
 

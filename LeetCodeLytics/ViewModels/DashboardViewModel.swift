@@ -109,7 +109,8 @@ final class DashboardViewModel: ObservableObject {
                         easySolved: self.easySolved,
                         mediumSolved: self.mediumSolved,
                         hardSolved: self.hardSolved,
-                        recentCalendar: recentCal
+                        recentCalendar: recentCal,
+                        fetchedAt: Date()
                     )
                     if let encoded = try? JSONEncoder().encode(widgetData) {
                         UserDefaults.appGroup.set(encoded, forKey: "widgetData")

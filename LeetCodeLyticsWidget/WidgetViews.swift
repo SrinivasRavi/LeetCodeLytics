@@ -161,6 +161,13 @@ private struct DifficultyDot: View {
 
 // MARK: - Heatmap for Large widget
 
+private let widgetHeatmapCalendar: Calendar = {
+    var cal = Calendar(identifier: .gregorian)
+    cal.timeZone = TimeZone(identifier: "UTC")!
+    cal.firstWeekday = 1
+    return cal
+}()
+
 struct WidgetHeatmapView: View {
     let recentCalendar: [String: Int]
     private let weeks = 10
@@ -175,9 +182,7 @@ struct WidgetHeatmapView: View {
     }
 
     private var weekDates: [[Date?]] {
-        var cal = Calendar(identifier: .gregorian)
-        cal.timeZone = TimeZone(identifier: "UTC")!
-        cal.firstWeekday = 1
+        let cal = widgetHeatmapCalendar
         let today = cal.startOfDay(for: Date())
         let weekday = cal.component(.weekday, from: today)
         let daysToSunday = (weekday - 1) % 7
@@ -220,9 +225,7 @@ struct WidgetHeatmapView: View {
     }
 
     private func countFor(date: Date) -> Int {
-        var cal = Calendar(identifier: .gregorian)
-        cal.timeZone = TimeZone(identifier: "UTC")!
-        let ts = Int(cal.startOfDay(for: date).timeIntervalSince1970)
+        let ts = Int(widgetHeatmapCalendar.startOfDay(for: date).timeIntervalSince1970)
         return dailyCounts[ts] ?? 0
     }
 

@@ -18,13 +18,27 @@ struct LeetCodeProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<LeetCodeEntry>) -> Void) {
         Task {
-            let data = await WidgetFetcher.fetch() ?? loadCached() ?? .placeholder
-            let entry = LeetCodeEntry(date: Date(), data: data)
-            // Save fresh data back to App Group for next snapshot
-            if let encoded = try? JSONEncoder().encode(data) {
-                UserDefaults(suiteName: "group.com.leetcodelytics.shared")?.set(encoded, forKey: "widgetData")
+            let now = Date()
+            let maxAge: TimeInterval = 30 * 60 // 30 minutes
+
+            // Use cached data if it was fetched recently — avoids network calls and
+            // stays well within the widget extension's ~30 MB memory budget.
+            let cached = loadCached()
+            let cacheIsFresh = cached?.fetchedAt.map { now.timeIntervalSince($0) < maxAge } ?? false
+
+            let data: WidgetData
+            if cacheIsFresh, let fresh = cached {
+                data = fresh
+            } else {
+                let fetched = await WidgetFetcher.fetch()
+                data = fetched ?? cached ?? .placeholder
+                if let encoded = try? JSONEncoder().encode(data) {
+                    UserDefaults(suiteName: "group.com.leetcodelytics.shared")?.set(encoded, forKey: "widgetData")
+                }
             }
-            let nextRefresh = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
+
+            let entry = LeetCodeEntry(date: now, data: data)
+            let nextRefresh = Calendar.current.date(byAdding: .minute, value: 30, to: now)!
             completion(Timeline(entries: [entry], policy: .after(nextRefresh)))
         }
     }

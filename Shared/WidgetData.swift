@@ -10,6 +10,8 @@ struct WidgetData: Codable {
     let hardSolved: Int
     /// Unix timestamp strings → solve count, covering the last 10 weeks.
     let recentCalendar: [String: Int]
+    /// When this data was fetched. nil means unknown age (treat as stale).
+    var fetchedAt: Date?
 
     static let placeholder = WidgetData(
         anysolveStreak: 0,
@@ -17,6 +19,7 @@ struct WidgetData: Codable {
         easySolved: 0,
         mediumSolved: 0,
         hardSolved: 0,
-        recentCalendar: [:]
+        recentCalendar: [:],
+        fetchedAt: nil
     )
 }
