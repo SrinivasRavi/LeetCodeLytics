@@ -19,7 +19,7 @@ struct UserProfileInfo: Codable {
 }
 
 struct UserBadge: Codable {
-    let id: Int?
+    let id: String?
     let name: String
     let icon: String
     let creationDate: String?

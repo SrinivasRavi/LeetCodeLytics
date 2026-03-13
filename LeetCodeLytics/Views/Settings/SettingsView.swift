@@ -77,7 +77,7 @@ struct SettingsView: View {
                     HStack {
                         Label("Version", systemImage: "info.circle")
                         Spacer()
-                        Text("1.5.1")
+                        Text("1.5.2")
                             .foregroundColor(.gray)
                     }
                 }
