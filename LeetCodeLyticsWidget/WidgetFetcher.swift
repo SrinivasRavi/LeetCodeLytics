@@ -19,14 +19,10 @@ enum WidgetFetcher {
         let user = username
         guard !user.isEmpty else { return nil }
 
-        async let profileTask = fetchSolvedCounts(username: user)
-        async let calendarTask = fetchCalendarString(username: user)
-        async let streakTask = fetchDCCStreak()
-
-        guard let counts = await profileTask,
-              let calString = await calendarTask else { return nil }
-
-        let dcc = (await streakTask) ?? 0
+        // Sequential fetches keep peak memory low — widget extensions have ~30 MB budget.
+        guard let counts = await fetchSolvedCounts(username: user) else { return nil }
+        guard let calString = await fetchCalendarString(username: user) else { return nil }
+        let dcc = (await fetchDCCStreak()) ?? 0
         let cal = SubmissionCalendar(jsonString: calString)
         let anysolve = StreakCalculator.computeStreak(from: cal)
 
