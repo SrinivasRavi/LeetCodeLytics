@@ -69,15 +69,18 @@ final class DashboardViewModel: ObservableObject {
             CacheService.saveTimestamp(for: cacheKey)
             UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastUpdated")
         } catch {
-            errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
+            let isCancelled = (error as? URLError)?.code == .cancelled || error is CancellationError
+            if !isCancelled {
+                errorMessage = (error as? LeetCodeError)?.errorDescription ?? error.localizedDescription
+            }
         }
 
-        // DCC streak — requires auth; fail silently if not available
+        // DCC streak — requires auth; fail silently if not available; preserve existing value on failure
         do {
             let streak = try await service.fetchStreakCounter()
             dccStreak = streak.streakCount
         } catch {
-            dccStreak = 0
+            // leave dccStreak as-is (cached value remains visible)
         }
 
         isLoading = false
