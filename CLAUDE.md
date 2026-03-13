@@ -7,42 +7,35 @@ programmatically. The user must be able to open the `.xcodeproj` and hit ⌘R wi
 
 ---
 
-## Versioning Plan
+## Current State
 
-### Version 1.0 — Core App (current target)
-A fully functioning standalone iOS app. No caching, no widgets, no App Groups, no entitlements, no WidgetKit.
-One target, one scheme. Git tag: `v1.0`
+**Shipped: v1.5.5** (branch: `main`)
 
-**Features:**
-- Onboarding: first-launch username input, validates against API
-- Dashboard tab: profile header (avatar, username, real name, global ranking), Easy/Medium/Hard progress rings, acceptance rate, DCC streak (🔥) + solve streak (⚡)
-- Calendar tab: 52-week GitHub-style heatmap colored by daily solve count, month labels, tap cell for count
-- Submissions tab: last 20 submissions with problem title, language, color-coded status, relative timestamp
-- Contest tab: rating, global ranking, top percentile, badge, Swift Charts rating history line chart, recent contest list
-- Skills tab: top tags by Advanced/Intermediate/Fundamental with bar charts, language breakdown
-- Settings tab: change username, enter LEETCODE_SESSION + csrftoken, refresh button, last updated timestamp
+All v1.x features are complete and working on device. The app is stable and ready for V2.0 development.
 
-**Explicitly excluded from V1.0:** caching, WidgetKit, App Groups, `Shared/` folder, entitlements files, any widget views
+---
 
-**Forward-compatibility requirement:** Include a no-op `CacheService.swift` stub with the correct interface.
-ViewModels call `CacheService.load()` / `CacheService.save()` — in V1.0 load returns nil and save is a no-op.
-This means V1.1 only touches `CacheService.swift`, not the ViewModels.
+## Versioning History
 
-### Version 1.1 — Local Caching
-Add `UserDefaults`-backed caching to `CacheService`. ViewModels unchanged.
-- On launch: show cached data immediately, fetch fresh in background
-- Cache keyed by username (switching users shows correct data)
-- `CacheService` uses a configurable `suiteName` (nil = standard UserDefaults in V1.1)
-- Cache considered stale after 30 min but still shown during refresh
-Git tag: `v1.1`
+### v1.0 — Core App ✅
+Standalone iOS app with all tabs, onboarding, and live API data.
 
-### Version 1.2 — Polish & Refinements
-Minor fixes and UX improvements identified from hands-on testing of V1.1.
-No major new features. Scope defined after V1.1 is tested.
-Git tag: `v1.2`
+### v1.1 — Local Caching ✅
+`UserDefaults`-backed `CacheService`. Cache-first strategy: show cached data immediately, fetch fresh in background. Cache keyed by username, stale after 30 min.
 
-### Version 2.0 — Widgets
-Add widget extension on top of V1.1.
+### v1.2–v1.4 — Polish & Refinements ✅
+UI fixes from hands-on testing: streak card layout, badge deduplication, pull-to-refresh on all tabs, "Updated X ago" timestamp, tab restructure (Calendar merged into Dashboard, Contest tab removed).
+
+### v1.5.x — Stability & Testing ✅
+- v1.5: CSRF bootstrap fix (`bootstrapCSRF()` GET on launch populates cookie jar)
+- v1.5.1: Robust `execute<T>` (JSONSerialization-first, then JSONDecoder on specific key)
+- v1.5.2: `UserBadge.id` fixed from `Int?` → `String?` (was causing Dashboard decode crash)
+- v1.5.3: Default session credentials seeded on first launch
+- v1.5.4: Pull-to-refresh cancelled error suppressed (partial fix)
+- v1.5.5: Pull-to-refresh fully fixed via unstructured Task + `withCheckedContinuation`; full test suite added (77 tests)
+
+### Version 2.0 — Widgets (next)
+Add widget extension on top of v1.5.5.
 - Migrate `CacheService` suiteName from nil → `group.com.leetcodelytics.shared` (one-line change)
 - Add `LeetCodeLytics.entitlements` + `LeetCodeLyticsWidget.entitlements` with App Groups
 - Add `Shared/` folder (move `SubmissionCalendar.swift`, `StreakCalculator.swift` there)
@@ -51,81 +44,77 @@ Git tag: `v2.0`
 
 ---
 
-## Forward Compatibility Rules (apply from V1.0 onwards)
+## Commit Rule — Tests Must Pass
 
-These rules ensure future versions are additive, not rewriting:
+**Run the full test suite before every commit.** No exceptions.
 
-1. **All models must be `Codable`** — required for V1.1 UserDefaults caching and V2.0 App Groups
-2. **ViewModels call `CacheService`, never `UserDefaults` directly** — so caching implementation is swappable
-3. **`CacheService` has a configurable suiteName** — nil in V1.0/V1.1, `group.com.leetcodelytics.shared` in V2.0
-4. **`SubmissionCalendar` and `StreakCalculator` live in `Services/`** in V1.0; in V2.0 they move to `Shared/` — keep them free of UIKit/SwiftUI imports so the move is painless
-5. **No business logic in Views** — all data derivation in ViewModels, so adding an Insights tab in V1.2 is pure addition
-6. **Username always read from `@AppStorage("username")`** — single source of truth, consistent across versions
-7. **`LeetCodeService` stays a plain class, not protocol-wrapped** — avoid premature abstraction; if testing is needed later, wrap it then
-
-## Build Strategy (to avoid iterating on broken builds)
-
-**Rule: build incrementally in dependency order. Run `xcodebuild` after each layer.**
-
-```
-Step 1: project.yml + xcodegen generate    → confirm .xcodeproj is created
-Step 2: Models/                            → xcodebuild ✓ (no deps, pure structs)
-Step 3: LeetCodeService.swift              → xcodebuild ✓ (uses models)
-Step 4: ViewModels/                        → xcodebuild ✓ (uses service + models)
-Step 5: Leaf views (no cross-view deps)    → xcodebuild ✓
-Step 6: Composite views (Dashboard, etc.) → xcodebuild ✓
-Step 7: ContentView + App entry point      → xcodebuild ✓
+```bash
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer \
+  xcodebuild -scheme LeetCodeLyticsTests \
+  -destination 'platform=iOS Simulator,name=iPhone 16' test \
+  2>&1 | grep -E '(error:|passed|failed|BUILD)'
 ```
 
-**Rules:**
-- Never write a file that references a type not yet written
-- Never skip a `xcodebuild` verification step
-- Fix any error before moving to the next layer
-- V1.0 has no capabilities/entitlements — eliminates all signing complexity
-- Use `xcodebuild -scheme LeetCodeLytics -destination 'platform=iOS Simulator,name=iPhone 16' build 2>&1 | grep -E '(error:|Build succeeded)'` for fast feedback
+All 77 tests must pass. If any fail, fix before committing.
 
 ---
 
 ## Build System
-- Use **XcodeGen** (`xcodegen generate`) to produce the `.xcodeproj` from `project.yml`
-- XcodeGen is installed at `/opt/homebrew/bin/xcodegen`
-- After writing all source files and `project.yml`, always run `xcodegen generate` to verify it works
+- Use **XcodeGen** (`/opt/homebrew/bin/xcodegen generate`) to produce the `.xcodeproj` from `project.yml`
+- After any `project.yml` change, run `xcodegen generate` before building
 - Never ask the user to do anything in Xcode manually
+- `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer` prefix required on all `xcodebuild` calls
+
+**Fast build check:**
+```bash
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer \
+  xcodebuild -scheme LeetCodeLytics \
+  -destination 'platform=iOS Simulator,name=iPhone 16' build \
+  2>&1 | grep -E '(error:|BUILD SUCCEEDED)'
+```
+
+---
 
 ## Project Identity
 | Key | Value |
 |-----|-------|
 | App name | LeetCodeLytics |
 | Main bundle ID | `com.leetcodelytics.app` |
-| Widget bundle ID | `com.leetcodelytics.app.widget` |
-| App Group ID | `group.com.leetcodelytics.shared` |
+| Test bundle ID | `com.leetcodelytics.app.tests` |
+| Widget bundle ID | `com.leetcodelytics.app.widget` (V2.0) |
+| App Group ID | `group.com.leetcodelytics.shared` (V2.0) |
 | Deployment target | iOS 17.0 |
 | Swift version | 5.9 |
-| Language | Swift / SwiftUI |
+| Username (AppStorage) | `spacewanderer` |
 
-## Directory Layout — V1.0
+---
+
+## Directory Layout — Current (v1.5.5)
+
 ```
 LeetCodeLytics/                          ← repo root
-  project.yml                            ← XcodeGen spec (single target, no entitlements)
-  LeetCodeLytics/                        ← all app sources
+  project.yml                            ← XcodeGen spec (app + test targets)
+  LeetCodeLytics/                        ← app sources
     App/
-      LeetCodeLyticsApp.swift
+      LeetCodeLyticsApp.swift            ← seeds default session credentials on first launch
       ContentView.swift
     Models/
-      UserProfile.swift                  ← SubmissionCount, SubmitStats, UserProfileResponse, UserBadge, ProblemCount
-      StreakData.swift                    ← StreakData, StreakCounterResponse
+      UserProfile.swift                  ← MatchedUser, SubmissionCount, SubmitStats,
+                                            UserProfileInfo, UserBadge (id: String?), ProblemCount
+      StreakData.swift                    ← StreakData, UserCalendarWrapper, StreakCounterResponse
       RecentSubmission.swift
-      ContestRanking.swift               ← ContestRanking, ContestHistory, ContestInfo, ContestBadge
-      LanguageStats.swift                ← LanguageStat, TagStat, SkillStats
-      SubmissionCalendar.swift           ← SubmissionCalendar (double-decode helper)
+      ContestRanking.swift               ← models kept but Contest tab removed from UI
+      LanguageStats.swift                ← LanguageStat, TagStat, TagProblemCounts
+      SubmissionCalendar.swift           ← double-decode helper (JSON string → [Int: Int])
     Services/
-      LeetCodeService.swift              ← all GraphQL API calls + response types
-      StreakCalculator.swift             ← any-solve streak from calendar timestamps
+      LeetCodeService.swift              ← GraphQL calls; injectable URLSession for testing
+      LeetCodeServiceProtocol.swift      ← protocol enabling ViewModel mock injection
+      StreakCalculator.swift             ← any-solve streak from calendar timestamps (UTC)
+      CacheService.swift                 ← UserDefaults-backed, suiteName = nil (→ App Groups in V2.0)
     ViewModels/
-      DashboardViewModel.swift
+      DashboardViewModel.swift           ← unstructured Task + withCheckedContinuation for refresh
       CalendarViewModel.swift
       SubmissionsViewModel.swift
-      ContestViewModel.swift
       SkillsViewModel.swift
     Views/
       Onboarding/UsernameInputView.swift
@@ -137,84 +126,79 @@ LeetCodeLytics/                          ← repo root
       Calendar/CalendarView.swift
       Calendar/HeatmapGridView.swift
       Submissions/SubmissionsView.swift
-      Contest/ContestView.swift
       Skills/SkillsView.swift
-      Settings/SettingsView.swift
+      Settings/SettingsView.swift        ← version string here; update on every version bump
+  LeetCodeLyticsTests/
+    Mocks/
+      MockLeetCodeService.swift          ← configurable mock + fixture builders
+      MockURLProtocol.swift              ← intercepts URLSession for network tests
+    ModelDecodeTests.swift
+    StreakCalculatorTests.swift
+    SubmissionCalendarTests.swift
+    CacheServiceTests.swift
+    LeetCodeServiceExecuteTests.swift
+    DashboardViewModelTests.swift
+    SubmissionsViewModelTests.swift
+  PersonalNotes/                         ← never commit credentials here (gitignore if needed)
+    PersonalNotes.md
+    BugAudit.md
+    LeetCodeLytics.postman_collection.json
 ```
 
-**V2.0 will add:** `LeetCodeLytics.entitlements`, `LeetCodeLyticsWidget.entitlements`, `LeetCodeLyticsWidget/` target, `Shared/` folder, `CacheService.swift`
+**V2.0 will add:** `LeetCodeLytics.entitlements`, `LeetCodeLyticsWidget.entitlements`, `LeetCodeLyticsWidget/` target, `Shared/` folder
 
-## project.yml — V1.0 (single target, no entitlements)
-```yaml
-name: LeetCodeLytics
-options:
-  bundleIdPrefix: com.leetcodelytics
-  createIntermediateGroups: true
-  deploymentTarget:
-    iOS: "17.0"
-settings:
-  base:
-    SWIFT_VERSION: "5.9"
-    IPHONEOS_DEPLOYMENT_TARGET: "17.0"
-targets:
-  LeetCodeLytics:
-    type: application
-    platform: iOS
-    sources:
-      - LeetCodeLytics
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.leetcodelytics.app
-        GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
-        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
-        CURRENT_PROJECT_VERSION: 1
-        MARKETING_VERSION: 1.0.0
-```
-
-**Note:** No `CODE_SIGN_ENTITLEMENTS`, no `dependencies`, no second target. Maximum simplicity.
+---
 
 ## Architecture
 
 ### Data Flow
 ```
 App launch
-  → LeetCodeService (GraphQL over HTTPS)
-  → DashboardViewModel (holds all fetched data)
-  → CacheService writes WidgetData to App Groups UserDefaults
-  → WidgetCenter.reloadAllTimelines()
-  → LeetCodeLyticsWidget TimelineProvider reads from App Groups
+  → bootstrapCSRF() — GET leetcode.com to seed csrftoken in cookie jar
+  → ViewModel.load() — apply cache immediately, then fetch fresh
+  → LeetCodeService.execute<T>() — JSONSerialization nav to key, then JSONDecoder
+  → CacheService.save() — UserDefaults (nil suite in V1.x, App Groups in V2.0)
 ```
 
 ### Key Design Decisions
 - `@MainActor` on all ViewModels; `async/await` throughout
-- Single `LeetCodeService.shared` singleton with generic `execute<T>` GraphQL dispatcher
-- `CacheService` wraps `UserDefaults(suiteName: AppGroupKeys.suiteName)` — same suite for app and widget
-- Widget uses **cache-first** strategy: reads local cache, then fetches fresh if stale (>30 min)
+- `LeetCodeService` is a concrete class; `LeetCodeServiceProtocol` enables testing
+- `LeetCodeService` accepts injectable `URLSession` (default `.shared`); `MockURLProtocol` intercepts in tests
+- All ViewModels accept injected `LeetCodeServiceProtocol` (default `LeetCodeService.shared`)
+- `DashboardViewModel.load()` wraps network calls in unstructured `Task {}` + `withCheckedContinuation` to survive SwiftUI `.refreshable` task cancellation
+- `CacheService.suiteName` = nil in V1.x; change to `group.com.leetcodelytics.shared` in V2.0
 - `StreakCalculator` works in UTC to match LeetCode's calendar timestamps
 - No third-party dependencies — pure Apple SDK only
 
 ### Two Streak Types
-- **DCC Streak** (`dccStreak`): from `streakCounter` GraphQL query — only counts Daily Coding Challenge solves; requires auth cookie
-- **Solve Streak** (`anysolveStreak`): computed locally from `submissionCalendar` timestamps via `StreakCalculator` — counts any day with ≥1 solve
+- **DCC Streak** (`dccStreak`): from `streakCounter` GraphQL — counts Daily Coding Challenge solves only; requires auth cookies; fails silently (preserves previous value)
+- **Solve Streak** (`anysolveStreak`): computed locally from `submissionCalendar` via `StreakCalculator` — counts any day with ≥1 solve
+
+### Session Credentials
+Default credentials are seeded in `LeetCodeLyticsApp.init()` via `UserDefaults` if not already set. User can override via Settings → Update Session Cookies. These are required for the DCC streak (`streakCounter` query).
+
+---
 
 ## LeetCode GraphQL API
 
 **Endpoint:** `POST https://leetcode.com/graphql`
 
-**Required headers:**
+**Required headers for all requests:**
 ```
 Content-Type: application/json
 Referer: https://leetcode.com
-User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)
-Cookie: LEETCODE_SESSION=<token>; csrftoken=<token>   ← optional, for private data
-x-csrftoken: <token>                                   ← optional, for private data
+User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1
 ```
 
-### GraphQL Queries (all verified working)
+**Additional headers for authenticated requests (DCC streak):**
+```
+Cookie: LEETCODE_SESSION=<token>; csrftoken=<token>
+x-csrftoken: <token>
+```
 
-**User profile + solve counts:**
+### GraphQL Queries (all verified working against real API)
+
+**User profile:**
 ```graphql
 query getUserProfile($username: String!) {
   matchedUser(username: $username) {
@@ -224,13 +208,20 @@ query getUserProfile($username: String!) {
       acSubmissionNum { difficulty count submissions }
       totalSubmissionNum { difficulty count submissions }
     }
-    badges { name icon }
+    badges { id name icon creationDate }
   }
+}
+```
+⚠️ `badges.id` is a **String** in the API response (e.g. `"7588899"`), not an Int.
+
+**All questions count** (fetched separately — cannot be combined with matchedUser in execute<T>):
+```graphql
+query allQuestionsCount {
   allQuestionsCount { difficulty count }
 }
 ```
 
-**Submission calendar (heatmap + any-solve streak):**
+**Submission calendar:**
 ```graphql
 query userProfileCalendar($username: String!, $year: Int) {
   matchedUser(username: $username) {
@@ -240,7 +231,7 @@ query userProfileCalendar($username: String!, $year: Int) {
   }
 }
 ```
-`submissionCalendar` is a JSON string: `"{\"1609459200\": 3, ...}"` — Unix timestamps → solve count.
+`submissionCalendar` is a JSON string: `"{\"1609459200\": 3, ...}"` — double-decode required.
 
 **DCC streak (auth required):**
 ```graphql
@@ -248,6 +239,7 @@ query getStreakCounter {
   streakCounter { streakCount currentDayCompleted }
 }
 ```
+Returns `null` for `streakCounter` if not authenticated.
 
 **Recent submissions:**
 ```graphql
@@ -257,29 +249,7 @@ query recentSubmissions($username: String!, $limit: Int) {
   }
 }
 ```
-
-**Contest ranking:**
-```graphql
-query userContestRanking($username: String!) {
-  userContestRankingInfo(username: $username) {
-    rating globalRanking localRanking topPercentage
-    badge { name icon }
-  }
-}
-```
-
-**Contest history:**
-```graphql
-query userContestHistory($username: String!) {
-  userContestRankingInfo(username: $username) {
-    contestHistory {
-      attended trendDirection problemsSolved totalProblems
-      finishTimeInSeconds rating ranking
-      contest { title startTime }
-    }
-  }
-}
-```
+⚠️ `timestamp` is a **String** in the response, not an Int.
 
 **Language stats:**
 ```graphql
@@ -303,147 +273,108 @@ query skillStats($username: String!) {
 }
 ```
 
-## App Features (all tabs)
+---
+
+## App Features (current tabs)
 
 ### 1. Dashboard Tab
 - Profile header: avatar (AsyncImage), username, real name, global ranking
-- Problem stats card: Easy / Medium / Hard solved vs total, with colored progress rings
-- Acceptance rate view
-- Streak card: DCC streak (🔥) + Solve streak (⚡), total active days
-- 52-week GitHub-style heatmap (mini version, tappable to go to Calendar tab)
+- Problem stats card: Easy / Medium / Hard solved vs total with progress rings
+- Acceptance rate card
+- Streak card: DCC streak (🔥 Daily Question Streak) + Solve streak (⚡ Solved Streak)
+- Last 52 weeks card: Max Streak, Active for count, submission activity heatmap, badges
+- Pull-to-refresh; "Updated X ago" in toolbar; orange error banner on failure
 
-### 2. Calendar Tab
-- Full-year heatmap grid (HeatmapGridView): 52 columns × 7 rows, colored by daily solve count
-- Month labels above columns
-- Tap a cell to see solve count for that day
-
-### 3. Submissions Tab
+### 2. Submissions Tab
 - List of recent 20 submissions
-- Shows: problem title, language, status (color-coded: green=Accepted, red=Wrong Answer, etc.), relative timestamp
+- Problem title, language, color-coded status, relative timestamp
+- Pull-to-refresh
 
-### 4. Contest Tab
-- Rating display with badge (if any)
-- Global ranking, top percentile
-- Line chart of contest rating history (using Swift Charts)
-- List of recent contests with result (trend arrow, problems solved, rank)
+### 3. Skills Tab
+- Horizontal bar chart of top solved tags: Advanced / Intermediate / Fundamental
+- Language breakdown
 
-### 5. Skills Tab
-- Horizontal bar chart of top solved tags grouped by: Advanced / Intermediate / Fundamental
-- Language pie/bar chart
-
-### 6. Settings Tab
-- Show current username with option to change
-- Session cookie input (LEETCODE_SESSION + csrftoken) for private data
-- "Refresh Data" button
-- Last updated timestamp
-- App version
+### 4. Settings Tab
+- Username display + change (validates against API)
+- LEETCODE_SESSION + csrftoken input (shown as ●●●●●●●● when set)
+- Last updated timestamp, app version
 
 ### Onboarding
-- Shown on first launch (no username stored yet)
-- Single text field for LeetCode username
-- Validates by attempting a profile fetch; shows error if user not found
+- First launch only (no username in UserDefaults)
+- Validates username against API before saving
 
-## Widgets — V2.0 ONLY (do not build in V1.0)
+---
 
-### Widget Bundle — Two Separate Widgets
-`LeetCodeLyticsWidget.swift` defines two `Widget` structs registered in `LeetCodeLyticsWidgetBundle`:
+## Test Suite (77 tests)
 
-**LeetCodeLyticsHomeWidget** — home screen:
-- `.systemSmall` → `SmallWidgetView`: username, total solved, both streaks
-- `.systemMedium` → `MediumWidgetView`: username, Easy/Medium/Hard counts, both streaks
-- `.systemLarge` → `LargeWidgetView`: all of medium + mini heatmap (last 10 weeks)
+| File | Coverage |
+|------|----------|
+| `ModelDecodeTests` | All models vs real API fixtures; `UserBadge.id` String regression |
+| `LeetCodeServiceExecuteTests` | extra fields, errors array, null, 403, 429, malformed JSON |
+| `StreakCalculatorTests` | empty, old solves, today/yesterday, gaps, consecutive runs |
+| `SubmissionCalendarTests` | valid JSON, empty, invalid, non-numeric keys, large calendar |
+| `CacheServiceTests` | save/load, timestamps, stale logic, clear, key isolation |
+| `DashboardViewModelTests` | load, errors, DCC preservation regression, isLoading transitions |
+| `SubmissionsViewModelTests` | load, errors, empty state, multiple calls |
 
-**LeetCodeLyticsLockScreenWidget** — lock screen:
-- `.accessoryCircular` → gauge showing DCC streak
-- `.accessoryRectangular` → username + both streaks + total solved
-- `.accessoryInline` → single line: "🔥N ⚡N · N solved"
+**Adding a new model or API call requires:**
+1. A fixture decode test in `ModelDecodeTests` using a real API response sample
+2. A `fetchXxx` test in `LeetCodeServiceExecuteTests`
+3. A ViewModel test if a new ViewModel method is added
 
-### Widget Data Sharing
-`CacheService` writes a `WidgetData` struct (JSON-encoded) to:
-```swift
-UserDefaults(suiteName: "group.com.leetcodelytics.shared")
-```
-The widget's `TimelineProvider` reads from the same suite. If cache is missing or >30 min old,
-`TimelineProvider` does its own self-contained GraphQL fetch (it does NOT import or call
-`LeetCodeService` from the main app — it uses private local decode types to stay isolated).
+---
 
-## Shared Models — V2.0 ONLY (compiled into both targets)
+## Common Pitfalls
 
-### WidgetData
-```swift
-public struct WidgetData: Codable {
-    public var username: String
-    public var ranking: Int
-    public var totalSolved: Int
-    public var easySolved: Int, mediumSolved: Int, hardSolved: Int
-    public var totalEasy: Int, totalMedium: Int, totalHard: Int
-    public var acceptanceRate: Double
-    public var dccStreak: Int
-    public var anysolveStreak: Int
-    public var totalActiveDays: Int
-    public var lastFetched: Date
-}
-```
+1. **`UserBadge.id` is a String** — LeetCode returns `"7588899"` (quoted), not `7588899`. Model must be `id: String?`.
 
-### AppGroupKeys
-```swift
-public enum AppGroupKeys {
-    public static let suiteName = "group.com.leetcodelytics.shared"
-    public static let widgetData = "widgetData"
-    public static let lastUpdated = "lastUpdated"
-    public static let username = "username"
-}
-```
+2. **`execute<T>` must use JSONSerialization first** — Never decode the full GraphQL response as `[String: [String: T]]`. Use JSONSerialization to navigate to `data[responseKey]`, then JSONDecoder on just that value. LeetCode often includes `errors`, `extensions`, or extra keys alongside `data`.
 
-### StreakCalculator
-Computes consecutive-day streak from `[Int: Int]` (Unix timestamp → solve count).
-Works in UTC. Allows streak to be live if today not yet solved (falls back to yesterday).
+3. **`submissionCalendar` requires double-decode** — It's a JSON string inside JSON. Decode outer as `String`, then parse that string as `[String: Int]`.
 
-## Error Handling
-```swift
-enum LeetCodeError: LocalizedError {
-    case invalidUsername    // matchedUser is null
-    case networkError(Error)
-    case decodingError(Error)
-    case unauthorized       // HTTP 403
-    case rateLimited        // HTTP 429
-}
-```
-ViewModels expose `@Published var errorMessage: String?` shown as alerts in views.
+4. **`allQuestionsCount` must be fetched separately** — It's a sibling of `matchedUser` at the GraphQL root. Cannot be decoded in the same `execute<T>` call as `matchedUser`. Fetch independently with `responseKey: "allQuestionsCount"`.
 
-## UI Style
-- Dark mode first (LeetCode brand feel)
-- Accent color: `#FFA116` (LeetCode orange)
-- Use SF Symbols throughout
-- Difficulty colors: Easy = `.green`, Medium = `.orange`, Hard = `.red`
-- Cards with rounded corners, subtle background using `.secondarySystemBackground`
+5. **`streakCounter` does not accept username** — Returns data for the authenticated user only. Never pass a username variable to this query.
 
-## Common Pitfalls (from previous iteration)
-1. **App Groups not in entitlements** — the widget can't read data. Fix: both `.entitlements` files must declare `com.apple.security.application-groups` with `group.com.leetcodelytics.shared`. The old project had EMPTY entitlements (`<dict/>`), which silently broke widget data sharing.
-2. **`streakCounter` query ignores username** — it returns data for the authenticated user only; don't pass username variable
-3. **`submissionCalendar` is a JSON string inside JSON** — requires double-decode: first as `String`, then parse that string as `[String: Int]`
-4. **Widget `Info.plist` must be explicit** — XcodeGen won't auto-generate it for extensions; must provide `INFOPLIST_FILE` setting pointing to a real file
-5. **Shared files target membership** — in `project.yml`, list `Shared` as a source path in BOTH targets so XcodeGen compiles them into both
-6. **`allQuestionsCount` cannot be decoded by the generic execute method** — the `execute<T>(responseKey:)` method extracts one key from `data{}`. Since `allQuestionsCount` is a sibling of `matchedUser` at the GraphQL root, it can't be decoded in the same call. Fetch it separately or hardcode totals. Do NOT try to decode both in one call.
-7. **`TimelineProvider` must be self-contained** — it cannot import types from the main app target. Use private local structs for decoding widget fetch responses.
-8. **Two response types for profile** — `LeetCodeService` returns `UserProfileResponse` (API response struct). There is also a `UserProfile` domain model with computed properties (totalSolved, acceptanceRate, etc.). ViewModels hold `UserProfileResponse`, views use it directly.
-9. **`StreakCounterResponse.streakCount`** (not `streakCounter`) is the field name returned by the `streakCounter` GraphQL query.
+6. **SwiftUI `.refreshable` cancels structured tasks** — `async let` inside a `.refreshable` callback creates child tasks that get cancelled when SwiftUI cancels the refresh task (scroll events, view lifecycle). Fix: wrap network calls in an unstructured `Task {}` inside `withCheckedContinuation` so they are immune to caller cancellation.
 
-## Build Verification Checklist — V1.0
-After generating all files and running `xcodegen generate`:
-- [ ] `LeetCodeLytics.xcodeproj` exists
-- [ ] No entitlements files exist (not needed in V1.0)
-- [ ] No widget sources exist (not needed in V1.0)
-- [ ] Every file referenced in `project.yml` sources path exists on disk
-- [ ] `xcode-select` points to Xcode: `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`
-- [ ] Build succeeds: `xcodebuild -project LeetCodeLytics.xcodeproj -scheme LeetCodeLytics -destination 'platform=iOS Simulator,name=iPhone 16' build 2>&1 | grep -E '(error:|Build succeeded)'`
-- [ ] Git commit tagged `v1.0`
+7. **DCC streak must preserve value on failure** — Never reset `dccStreak = 0` in a catch block. If the fetch fails (auth error, network error, cancellation), the previously displayed value should remain.
+
+8. **`StreakCounterResponse.streakCount`** — The decoded field is `streakCount`, not `streakCounter`.
+
+9. **App Groups not in entitlements (V2.0 reminder)** — Both `.entitlements` files must declare `com.apple.security.application-groups`. Empty entitlements (`<dict/>`) silently break widget data sharing.
+
+10. **Widget `Info.plist` must be explicit (V2.0)** — XcodeGen won't auto-generate for extensions. Provide `INFOPLIST_FILE` pointing to a real file.
+
+11. **`TimelineProvider` must be self-contained (V2.0)** — Cannot import types from the main app target. Use private local decode structs.
+
+---
+
+## Forward Compatibility Rules
+
+1. **All models must be `Codable`** — required for UserDefaults caching and V2.0 App Groups
+2. **ViewModels call `CacheService`, never `UserDefaults` directly** — caching implementation is swappable
+3. **`CacheService.suiteName` = nil in V1.x** — change to `group.com.leetcodelytics.shared` in V2.0
+4. **`SubmissionCalendar` and `StreakCalculator` stay free of UIKit/SwiftUI** — so they can move to `Shared/` in V2.0 without changes
+5. **No business logic in Views** — all derivation in ViewModels
+6. **Username always read from `@AppStorage("username")`** — single source of truth
+7. **All ViewModels accept injected `LeetCodeServiceProtocol`** — default = `LeetCodeService.shared`; required for testing
+
+---
+
+## V2.0 Preparation Checklist
+
+Before starting V2.0:
+- [ ] All 77 tests pass
+- [ ] App verified working on device (v1.5.5)
+- [ ] `CacheService.suiteName` is nil (ready for one-line change to App Groups)
+- [ ] `SubmissionCalendar` and `StreakCalculator` have no UIKit/SwiftUI imports
 
 ---
 
 ## Backlog (deferred — do not implement until explicitly requested)
 
-- **Unique Solved Streak:** Split "Solved Streak" into two separate stats:
-  - "Any Solved Streak" — consecutive days with ≥1 successful submission (any problem)
-  - "Unique Solved Streak" — consecutive days where a problem was accepted that had never been solved before
-- **DCC Streak end-to-end test:** Verify 🔥 Daily Question Streak works correctly after session cookies are entered in Settings
+- **Unique Solved Streak:** Split "Solved Streak" into two:
+  - "Any Solved Streak" — consecutive days with ≥1 successful submission
+  - "Unique Solved Streak" — consecutive days where a previously-unsolved problem was accepted
+- **DCC Streak end-to-end test:** Verify 🔥 Daily Question Streak works correctly end-to-end with session cookies
