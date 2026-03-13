@@ -23,9 +23,14 @@ enum LeetCodeError: LocalizedError {
     }
 }
 
-final class LeetCodeService {
+final class LeetCodeService: LeetCodeServiceProtocol {
     static let shared = LeetCodeService()
-    private init() {}
+
+    let session: URLSession
+
+    init(session: URLSession = .shared) {
+        self.session = session
+    }
 
     private let endpoint = URL(string: "https://leetcode.com/graphql")!
 
@@ -44,7 +49,7 @@ final class LeetCodeService {
             forHTTPHeaderField: "User-Agent"
         )
         req.setValue("https://leetcode.com", forHTTPHeaderField: "Referer")
-        _ = try? await URLSession.shared.data(for: req)
+        _ = try? await session.data(for: req)
     }
 
     private func buildRequest(query: String, variables: [String: Any] = [:]) -> URLRequest {
@@ -88,7 +93,7 @@ final class LeetCodeService {
         responseKey: String
     ) async throws -> T {
         let request = buildRequest(query: query, variables: variables)
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await session.data(for: request)
 
         if let http = response as? HTTPURLResponse {
             if http.statusCode == 403 { throw LeetCodeError.unauthorized }

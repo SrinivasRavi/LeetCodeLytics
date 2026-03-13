@@ -11,7 +11,11 @@ final class DashboardViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    private let service = LeetCodeService.shared
+    private let service: LeetCodeServiceProtocol
+
+    init(service: LeetCodeServiceProtocol = LeetCodeService.shared) {
+        self.service = service
+    }
 
     var easySolved: Int { profile?.submitStats.acSubmissionNum.first { $0.difficulty == "Easy" }?.count ?? 0 }
     var mediumSolved: Int { profile?.submitStats.acSubmissionNum.first { $0.difficulty == "Medium" }?.count ?? 0 }

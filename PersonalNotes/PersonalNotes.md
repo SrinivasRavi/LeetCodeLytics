@@ -1,5 +1,22 @@
 # LeetCodeLytics – Claude Build Guide
 
+## Thoughts after v1.5.4 testing
+I see you just removed the banner. Do you realize my complaint was not about the banner, but about refresh not happening when pulled to refresh. Just removing the banner fixes nothing. From my testing, functionally v1.5.3 and v1.5.4 are the same minus the banner. Even DCC streak is being set to 0 when refresh fails. So in short, pull to refresh is still broken for dashboard tab.
+
+## Thoughts after v1.5.3 testing
+1. Good job, I can see the dashboard with latest information. I like that we refresh everytime we change the tab, and also when we pull to refresh. Good design. Also good job in identifying the datatype problem and fixing it. Also good job in incorporating feedbacks I have provided till now.
+2. While Submissions tab's pull to refresh works flawlessly everytime, Dashboard's pull to refresh is buggy. Problem is exclusively in "Dashboard" tab. Dashboard refreshes when I switch to that tab, but not during pull to refresh. When I do pull to refresh, I see "Refresh failed: cancelled". Also the Daily Question Streak becomes 0. It should be 1 at the time of testing. I have tried refreshing multiple times with pull to refresh, but no change - the banner remains and DCC is 0. It's not the internet connection, because it immediately updates when I switch tabs to refresh.
+
+## Thoughts after v1.5.1 testing
+1. I ran once again in xcode connecting my iphone. I could see the banner "Refresh failed: Failed to decode response: The data couldn't be read because it isn't in the correct format." I also took your help to form Postman collection and test the apis manually. I could see the latest responses. I saved the collection with responses in PersonalNotes > ResponsesLeetCodeLytics.postman_collection.json. I have saved responses and all of them are saved as Success_Mar13. Only 1 query needing the csrf token and leetcode session has 3 saved responses. The ones marked Success_Before* and Success_After* clearly show the DCC streak is updated too as expected. I am giving you the session and token information, persist in the code so that we could see the DCC streak in the app too.
+
+LEETCODE_SESSION: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfYXV0aF91c2VyX2lkIjoiMTIzNTcyMiIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImFsbGF1dGguYWNjb3VudC5hdXRoX2JhY2tlbmRzLkF1dGhlbnRpY2F0aW9uQmFja2VuZCIsIl9hdXRoX3VzZXJfaGFzaCI6ImU3MDZjOTRiODQwMGY2YjhiZDRhMjc1NTQ5YjllZTJlZmIwMTM5NTNhYWQyZjUwMmEzZmI3Zjc3MGJiODg1YmEiLCJzZXNzaW9uX3V1aWQiOiI3ZTlhYTY5MiIsImlkIjoxMjM1NzIyLCJlbWFpbCI6InNyaW5pdmFzcm9oYW4xMUBnbWFpbC5jb20iLCJ1c2VybmFtZSI6InNwYWNld2FuZGVyZXIiLCJ1c2VyX3NsdWciOiJzcGFjZXdhbmRlcmVyIiwiYXZhdGFyIjoiaHR0cHM6Ly9hc3NldHMubGVldGNvZGUuY29tL3VzZXJzL3NwYWNld2FuZGVyZXIvYXZhdGFyXzE1NTM0NzY2NTMucG5nIiwicmVmcmVzaGVkX2F0IjoxNzczMzYzOTM5LCJpcCI6IjIwMi4xNDEuMzYuOCIsImlkZW50aXR5IjoiZGY0YmYwNGY5YmY3YjZhZjA5ZTNlOTQxNzk3MzM3NzAiLCJkZXZpY2Vfd2l0aF9pcCI6WyIwZmE3Nzk3ODFmMjUxNjhkOTIwMTBhZTBiNTZhMTVhZiIsIjIwMi4xNDEuMzYuOCJdLCJfc2Vzc2lvbl9leHBpcnkiOjEyMDk2MDB9.-l6fez0TENoSdxsymS3hzc8Wne_5EZQDjpNE_2kzi6g
+
+csrftoken : eV1JvjNCIh0MSxOL5i0tbg9mnW22xsmc
+
+tldr: things should work. The app is malfunctioning. Giving you a chance to fix things yourself.
+
+
 ## Thoughts after v1.4 testing
 1. I like that you added pull to refresh in all tabs without me suggesting that explicitly. I tested it in submissions tab and it works well. I can't get the dashboard to work still. Can you display the values for everything in dashboard over here in terminal (Except calendar of course)? I want to see where is the problem, the graphQL endpoint at Leetcode or in our app.
 2. Currently I see "Refresh failed - Showing cached data" in a small persistent banner in "Dashboard" tab.

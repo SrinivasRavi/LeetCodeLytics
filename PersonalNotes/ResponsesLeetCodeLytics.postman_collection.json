@@ -1,0 +1,1300 @@
+{
+	"info": {
+		"_postman_id": "231c215a-022e-45e3-b496-bb8de213b5d0",
+		"name": "LeetCodeLytics",
+		"description": "All GraphQL queries used by the LeetCodeLytics iOS app against https://leetcode.com/graphql",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37856626"
+	},
+	"item": [
+		{
+			"name": "1. User Profile",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Referer",
+						"value": "https://leetcode.com"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query\": \"query getUserProfile($username: String!) { matchedUser(username: $username) { username profile { ranking userAvatar realName reputation } submitStats: submitStatsGlobal { acSubmissionNum { difficulty count submissions } totalSubmissionNum { difficulty count submissions } } badges { id name icon creationDate } } }\",\n  \"variables\": { \"username\": \"{{username}}\" }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://leetcode.com/graphql",
+					"protocol": "https",
+					"host": [
+						"leetcode",
+						"com"
+					],
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success_Mar13",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Referer",
+								"value": "https://leetcode.com"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"query getUserProfile($username: String!) { matchedUser(username: $username) { username profile { ranking userAvatar realName reputation } submitStats: submitStatsGlobal { acSubmissionNum { difficulty count submissions } totalSubmissionNum { difficulty count submissions } } badges { id name icon creationDate } } }\",\n  \"variables\": { \"username\": \"{{username}}\" }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://leetcode.com/graphql",
+							"protocol": "https",
+							"host": [
+								"leetcode",
+								"com"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 13 Mar 2026 08:10:38 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "vary",
+							"value": "Cookie, Authorization"
+						},
+						{
+							"key": "x-frame-options",
+							"value": "DENY"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "csrftoken=wNr9UdxCpDJGQRHvhXxC6GGnFtVettDN; expires=Fri, 12 Mar 2027 08:10:37 GMT; Max-Age=31449600; Path=/; SameSite=Lax; Secure"
+						},
+						{
+							"key": "strict-transport-security",
+							"value": "max-age=15552000; includeSubDomains; preload"
+						},
+						{
+							"key": "content-security-policy",
+							"value": "frame-ancestors 'self' https://*.leetcode.com https://leetcode.com https://www.growingio.com https://challenges.cloudflare.com"
+						},
+						{
+							"key": "cf-cache-status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "9db99032185b3d23-BLR"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"matchedUser\": {\n            \"username\": \"spacewanderer\",\n            \"profile\": {\n                \"ranking\": 327632,\n                \"userAvatar\": \"https://assets.leetcode.com/users/spacewanderer/avatar_1553476653.png\",\n                \"realName\": \"spaceTimeWanderer\",\n                \"reputation\": 9\n            },\n            \"submitStats\": {\n                \"acSubmissionNum\": [\n                    {\n                        \"difficulty\": \"All\",\n                        \"count\": 362,\n                        \"submissions\": 1572\n                    },\n                    {\n                        \"difficulty\": \"Easy\",\n                        \"count\": 134,\n                        \"submissions\": 552\n                    },\n                    {\n                        \"difficulty\": \"Medium\",\n                        \"count\": 199,\n                        \"submissions\": 914\n                    },\n                    {\n                        \"difficulty\": \"Hard\",\n                        \"count\": 29,\n                        \"submissions\": 106\n                    }\n                ],\n                \"totalSubmissionNum\": [\n                    {\n                        \"difficulty\": \"All\",\n                        \"count\": 395,\n                        \"submissions\": 2394\n                    },\n                    {\n                        \"difficulty\": \"Easy\",\n                        \"count\": 138,\n                        \"submissions\": 729\n                    },\n                    {\n                        \"difficulty\": \"Medium\",\n                        \"count\": 221,\n                        \"submissions\": 1481\n                    },\n                    {\n                        \"difficulty\": \"Hard\",\n                        \"count\": 36,\n                        \"submissions\": 184\n                    }\n                ]\n            },\n            \"badges\": [\n                {\n                    \"id\": \"7588899\",\n                    \"name\": \"Submission Badge\",\n                    \"icon\": \"https://assets.leetcode.com/static_assets/marketing/lg365.png\",\n                    \"creationDate\": \"2025-07-19\"\n                },\n                {\n                    \"id\": \"7500932\",\n                    \"name\": \"Annual Badge\",\n                    \"icon\": \"https://assets.leetcode.com/static_assets/others/lg25100.png\",\n                    \"creationDate\": \"2025-07-09\"\n                },\n                {\n                    \"id\": \"6908634\",\n                    \"name\": \"Annual Badge\",\n                    \"icon\": \"https://assets.leetcode.com/static_assets/others/lg2550.png\",\n                    \"creationDate\": \"2025-04-28\"\n                },\n                {\n                    \"id\": \"5421894\",\n                    \"name\": \"Annual Badge\",\n                    \"icon\": \"https://assets.leetcode.com/static_assets/marketing/2024-100-lg.png\",\n                    \"creationDate\": \"2024-11-11\"\n                },\n                {\n                    \"id\": \"4857523\",\n                    \"name\": \"Annual Badge\",\n                    \"icon\": \"https://assets.leetcode.com/static_assets/marketing/2024-50-lg.png\",\n                    \"creationDate\": \"2024-09-04\"\n                }\n            ]\n        }\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "2. All Questions Count",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Referer",
+						"value": "https://leetcode.com"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query\": \"query allQuestionsCount { allQuestionsCount { difficulty count } }\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://leetcode.com/graphql",
+					"protocol": "https",
+					"host": [
+						"leetcode",
+						"com"
+					],
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success_Mar13",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Referer",
+								"value": "https://leetcode.com"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"query allQuestionsCount { allQuestionsCount { difficulty count } }\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://leetcode.com/graphql",
+							"protocol": "https",
+							"host": [
+								"leetcode",
+								"com"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 13 Mar 2026 08:11:10 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "vary",
+							"value": "Cookie, Authorization"
+						},
+						{
+							"key": "x-frame-options",
+							"value": "DENY"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "csrftoken=wNr9UdxCpDJGQRHvhXxC6GGnFtVettDN; expires=Fri, 12 Mar 2027 08:11:10 GMT; Max-Age=31449600; Path=/; SameSite=Lax; Secure"
+						},
+						{
+							"key": "strict-transport-security",
+							"value": "max-age=15552000; includeSubDomains; preload"
+						},
+						{
+							"key": "content-security-policy",
+							"value": "frame-ancestors 'self' https://*.leetcode.com https://leetcode.com https://www.growingio.com https://challenges.cloudflare.com"
+						},
+						{
+							"key": "cf-cache-status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "9db990fa4ee43d23-BLR"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"allQuestionsCount\": [\n            {\n                \"difficulty\": \"All\",\n                \"count\": 3865\n            },\n            {\n                \"difficulty\": \"Easy\",\n                \"count\": 930\n            },\n            {\n                \"difficulty\": \"Medium\",\n                \"count\": 2022\n            },\n            {\n                \"difficulty\": \"Hard\",\n                \"count\": 913\n            }\n        ]\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "3. Submission Calendar",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Referer",
+						"value": "https://leetcode.com"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query\": \"query userProfileCalendar($username: String!) { matchedUser(username: $username) { userCalendar { activeYears streak totalActiveDays submissionCalendar } } }\",\n  \"variables\": { \"username\": \"{{username}}\" }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://leetcode.com/graphql",
+					"protocol": "https",
+					"host": [
+						"leetcode",
+						"com"
+					],
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success_Mar13",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Referer",
+								"value": "https://leetcode.com"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"query userProfileCalendar($username: String!) { matchedUser(username: $username) { userCalendar { activeYears streak totalActiveDays submissionCalendar } } }\",\n  \"variables\": { \"username\": \"{{username}}\" }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://leetcode.com/graphql",
+							"protocol": "https",
+							"host": [
+								"leetcode",
+								"com"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 13 Mar 2026 08:11:15 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "vary",
+							"value": "Cookie, Authorization"
+						},
+						{
+							"key": "x-frame-options",
+							"value": "DENY"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "csrftoken=wNr9UdxCpDJGQRHvhXxC6GGnFtVettDN; expires=Fri, 12 Mar 2027 08:11:15 GMT; Max-Age=31449600; Path=/; SameSite=Lax; Secure"
+						},
+						{
+							"key": "strict-transport-security",
+							"value": "max-age=15552000; includeSubDomains; preload"
+						},
+						{
+							"key": "content-security-policy",
+							"value": "frame-ancestors 'self' https://*.leetcode.com https://leetcode.com https://www.growingio.com https://challenges.cloudflare.com"
+						},
+						{
+							"key": "cf-cache-status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "9db9911eeadc3d23-BLR"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"matchedUser\": {\n            \"userCalendar\": {\n                \"activeYears\": [\n                    2018,\n                    2019,\n                    2020,\n                    2021,\n                    2022,\n                    2024,\n                    2025,\n                    2026\n                ],\n                \"streak\": 10,\n                \"totalActiveDays\": 107,\n                \"submissionCalendar\": \"{\\\"1767225600\\\": 1, \\\"1767312000\\\": 5, \\\"1767484800\\\": 3, \\\"1767571200\\\": 3, \\\"1767657600\\\": 1, \\\"1767744000\\\": 3, \\\"1767830400\\\": 1, \\\"1767916800\\\": 1, \\\"1768003200\\\": 1, \\\"1773187200\\\": 4, \\\"1741824000\\\": 9, \\\"1741910400\\\": 7, \\\"1741996800\\\": 5, \\\"1742083200\\\": 6, \\\"1742169600\\\": 9, \\\"1742256000\\\": 21, \\\"1742428800\\\": 3, \\\"1742515200\\\": 2, \\\"1743206400\\\": 4, \\\"1743292800\\\": 17, \\\"1743552000\\\": 6, \\\"1743638400\\\": 16, \\\"1743724800\\\": 14, \\\"1743811200\\\": 10, \\\"1743897600\\\": 1, \\\"1744070400\\\": 1, \\\"1744156800\\\": 7, \\\"1744243200\\\": 8, \\\"1744329600\\\": 7, \\\"1744416000\\\": 17, \\\"1744502400\\\": 2, \\\"1744934400\\\": 6, \\\"1745020800\\\": 11, \\\"1745107200\\\": 4, \\\"1745452800\\\": 1, \\\"1745539200\\\": 2, \\\"1745625600\\\": 1, \\\"1745712000\\\": 3, \\\"1745798400\\\": 3, \\\"1746057600\\\": 11, \\\"1746144000\\\": 16, \\\"1746230400\\\": 8, \\\"1746316800\\\": 11, \\\"1746403200\\\": 10, \\\"1746489600\\\": 3, \\\"1746576000\\\": 8, \\\"1746662400\\\": 7, \\\"1746921600\\\": 7, \\\"1747094400\\\": 3, \\\"1747180800\\\": 10, \\\"1747267200\\\": 1, \\\"1747353600\\\": 21, \\\"1747526400\\\": 2, \\\"1747699200\\\": 13, \\\"1747785600\\\": 9, \\\"1747872000\\\": 5, \\\"1747958400\\\": 20, \\\"1748476800\\\": 2, \\\"1748563200\\\": 4, \\\"1748649600\\\": 18, \\\"1748822400\\\": 6, \\\"1748995200\\\": 15, \\\"1749081600\\\": 14, \\\"1749168000\\\": 1, \\\"1749340800\\\": 2, \\\"1749427200\\\": 20, \\\"1749513600\\\": 28, \\\"1749600000\\\": 16, \\\"1749686400\\\": 1, \\\"1749945600\\\": 4, \\\"1750032000\\\": 1, \\\"1750204800\\\": 11, \\\"1750291200\\\": 4, \\\"1750377600\\\": 20, \\\"1750464000\\\": 2, \\\"1750550400\\\": 2, \\\"1750723200\\\": 3, \\\"1750809600\\\": 17, \\\"1750896000\\\": 13, \\\"1750982400\\\": 2, \\\"1751328000\\\": 21, \\\"1751414400\\\": 7, \\\"1751500800\\\": 11, \\\"1751587200\\\": 14, \\\"1751673600\\\": 32, \\\"1751760000\\\": 61, \\\"1751846400\\\": 31, \\\"1751932800\\\": 14, \\\"1752019200\\\": 1, \\\"1752105600\\\": 5, \\\"1752364800\\\": 3, \\\"1752451200\\\": 8, \\\"1752537600\\\": 11, \\\"1752624000\\\": 4, \\\"1752796800\\\": 27, \\\"1752883200\\\": 25, \\\"1752969600\\\": 29, \\\"1753056000\\\": 28, \\\"1755648000\\\": 1, \\\"1757030400\\\": 1, \\\"1765584000\\\": 1, \\\"1766361600\\\": 4, \\\"1766448000\\\": 1, \\\"1766534400\\\": 3, \\\"1766620800\\\": 3, \\\"1766707200\\\": 1, \\\"1766880000\\\": 1}\"\n            }\n        }\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "4. DCC Streak (auth required)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Referer",
+						"value": "https://leetcode.com"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+					},
+					{
+						"key": "Cookie",
+						"value": "LEETCODE_SESSION={{leetcode_session}}; csrftoken={{csrf_token}}"
+					},
+					{
+						"key": "x-csrftoken",
+						"value": "{{csrf_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query\": \"query getStreakCounter { streakCounter { streakCount currentDayCompleted } }\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://leetcode.com/graphql",
+					"protocol": "https",
+					"host": [
+						"leetcode",
+						"com"
+					],
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "200OK_NoResponse",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Referer",
+								"value": "https://leetcode.com"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+							},
+							{
+								"key": "Cookie",
+								"value": "LEETCODE_SESSION={{leetcode_session}}; csrftoken={{csrf_token}}"
+							},
+							{
+								"key": "x-csrftoken",
+								"value": "{{csrf_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"query getStreakCounter { streakCounter { streakCount currentDayCompleted } }\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://leetcode.com/graphql",
+							"protocol": "https",
+							"host": [
+								"leetcode",
+								"com"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 13 Mar 2026 08:11:25 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "31"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "vary",
+							"value": "Cookie, Authorization"
+						},
+						{
+							"key": "x-frame-options",
+							"value": "DENY"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "csrftoken=wNr9UdxCpDJGQRHvhXxC6GGnFtVettDN; expires=Fri, 12 Mar 2027 08:11:25 GMT; Max-Age=31449600; Path=/; SameSite=Lax; Secure"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "LEETCODE_SESSION=\"\"; Domain=.leetcode.com; expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; Path=/; SameSite=Lax"
+						},
+						{
+							"key": "strict-transport-security",
+							"value": "max-age=15552000; includeSubDomains; preload"
+						},
+						{
+							"key": "content-security-policy",
+							"value": "frame-ancestors 'self' https://*.leetcode.com https://leetcode.com https://www.growingio.com https://challenges.cloudflare.com"
+						},
+						{
+							"key": "cf-cache-status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "9db9915a3fcd3d23-BLR"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"streakCounter\": null\n    }\n}"
+				},
+				{
+					"name": "Success_BeforeSolve_Mar13",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Referer",
+								"value": "https://leetcode.com"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+							},
+							{
+								"key": "Cookie",
+								"value": "LEETCODE_SESSION={{leetcode_session}}; csrftoken={{csrf_token}}"
+							},
+							{
+								"key": "x-csrftoken",
+								"value": "{{csrf_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"query getStreakCounter { streakCounter { streakCount currentDayCompleted } }\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://leetcode.com/graphql",
+							"protocol": "https",
+							"host": [
+								"leetcode",
+								"com"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 13 Mar 2026 08:22:02 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "vary",
+							"value": "Cookie, Authorization"
+						},
+						{
+							"key": "x-frame-options",
+							"value": "DENY"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "csrftoken=wNr9UdxCpDJGQRHvhXxC6GGnFtVettDN; expires=Fri, 12 Mar 2027 08:22:02 GMT; Max-Age=31449600; Path=/; SameSite=Lax; Secure"
+						},
+						{
+							"key": "strict-transport-security",
+							"value": "max-age=15552000; includeSubDomains; preload"
+						},
+						{
+							"key": "content-security-policy",
+							"value": "frame-ancestors 'self' https://*.leetcode.com https://leetcode.com https://www.growingio.com https://challenges.cloudflare.com"
+						},
+						{
+							"key": "cf-cache-status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "9db9a0e88bcd3d2f-BLR"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"streakCounter\": {\n            \"streakCount\": 0,\n            \"currentDayCompleted\": false\n        }\n    }\n}"
+				},
+				{
+					"name": "Success_AfterSolve_Mar13",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Referer",
+								"value": "https://leetcode.com"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+							},
+							{
+								"key": "Cookie",
+								"value": "LEETCODE_SESSION={{leetcode_session}}; csrftoken={{csrf_token}}"
+							},
+							{
+								"key": "x-csrftoken",
+								"value": "{{csrf_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"query getStreakCounter { streakCounter { streakCount currentDayCompleted } }\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://leetcode.com/graphql",
+							"protocol": "https",
+							"host": [
+								"leetcode",
+								"com"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 13 Mar 2026 08:23:20 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "vary",
+							"value": "Cookie, Authorization"
+						},
+						{
+							"key": "x-frame-options",
+							"value": "DENY"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "csrftoken=wNr9UdxCpDJGQRHvhXxC6GGnFtVettDN; expires=Fri, 12 Mar 2027 08:23:20 GMT; Max-Age=31449600; Path=/; SameSite=Lax; Secure"
+						},
+						{
+							"key": "strict-transport-security",
+							"value": "max-age=15552000; includeSubDomains; preload"
+						},
+						{
+							"key": "content-security-policy",
+							"value": "frame-ancestors 'self' https://*.leetcode.com https://leetcode.com https://www.growingio.com https://challenges.cloudflare.com"
+						},
+						{
+							"key": "cf-cache-status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "9db9a2d229a33d29-BLR"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"streakCounter\": {\n            \"streakCount\": 1,\n            \"currentDayCompleted\": true\n        }\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "5. Recent Submissions",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Referer",
+						"value": "https://leetcode.com"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query\": \"query recentSubmissions($username: String!, $limit: Int) { recentSubmissionList(username: $username, limit: $limit) { title titleSlug timestamp statusDisplay lang } }\",\n  \"variables\": { \"username\": \"{{username}}\", \"limit\": 20 }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://leetcode.com/graphql",
+					"protocol": "https",
+					"host": [
+						"leetcode",
+						"com"
+					],
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success_Mar13",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Referer",
+								"value": "https://leetcode.com"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"query recentSubmissions($username: String!, $limit: Int) { recentSubmissionList(username: $username, limit: $limit) { title titleSlug timestamp statusDisplay lang } }\",\n  \"variables\": { \"username\": \"{{username}}\", \"limit\": 20 }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://leetcode.com/graphql",
+							"protocol": "https",
+							"host": [
+								"leetcode",
+								"com"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 13 Mar 2026 08:11:50 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "vary",
+							"value": "Cookie, Authorization"
+						},
+						{
+							"key": "x-frame-options",
+							"value": "DENY"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "csrftoken=wNr9UdxCpDJGQRHvhXxC6GGnFtVettDN; expires=Fri, 12 Mar 2027 08:11:50 GMT; Max-Age=31449600; Path=/; SameSite=Lax; Secure"
+						},
+						{
+							"key": "strict-transport-security",
+							"value": "max-age=15552000; includeSubDomains; preload"
+						},
+						{
+							"key": "content-security-policy",
+							"value": "frame-ancestors 'self' https://*.leetcode.com https://leetcode.com https://www.growingio.com https://challenges.cloudflare.com"
+						},
+						{
+							"key": "cf-cache-status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "9db991f17bb93d23-BLR"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"recentSubmissionList\": [\n            {\n                \"title\": \"LRU Cache\",\n                \"titleSlug\": \"lru-cache\",\n                \"timestamp\": \"1773250833\",\n                \"statusDisplay\": \"Accepted\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"Merge Intervals\",\n                \"titleSlug\": \"merge-intervals\",\n                \"timestamp\": \"1773249858\",\n                \"statusDisplay\": \"Accepted\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"LRU Cache\",\n                \"titleSlug\": \"lru-cache\",\n                \"timestamp\": \"1773249822\",\n                \"statusDisplay\": \"Accepted\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"Missing Ranges\",\n                \"titleSlug\": \"missing-ranges\",\n                \"timestamp\": \"1773249410\",\n                \"statusDisplay\": \"Accepted\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"Minimum ASCII Delete Sum for Two Strings\",\n                \"titleSlug\": \"minimum-ascii-delete-sum-for-two-strings\",\n                \"timestamp\": \"1768070608\",\n                \"statusDisplay\": \"Accepted\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"Smallest Subtree with all the Deepest Nodes\",\n                \"titleSlug\": \"smallest-subtree-with-all-the-deepest-nodes\",\n                \"timestamp\": \"1767987013\",\n                \"statusDisplay\": \"Accepted\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"Max Dot Product of Two Subsequences\",\n                \"titleSlug\": \"max-dot-product-of-two-subsequences\",\n                \"timestamp\": \"1767870113\",\n                \"statusDisplay\": \"Accepted\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"Maximum Product of Splitted Binary Tree\",\n                \"titleSlug\": \"maximum-product-of-splitted-binary-tree\",\n                \"timestamp\": \"1767784465\",\n                \"statusDisplay\": \"Accepted\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"Maximum Product of Splitted Binary Tree\",\n                \"titleSlug\": \"maximum-product-of-splitted-binary-tree\",\n                \"timestamp\": \"1767783614\",\n                \"statusDisplay\": \"Time Limit Exceeded\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"Maximum Product of Splitted Binary Tree\",\n                \"titleSlug\": \"maximum-product-of-splitted-binary-tree\",\n                \"timestamp\": \"1767783558\",\n                \"statusDisplay\": \"Wrong Answer\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"Maximum Level Sum of a Binary Tree\",\n                \"titleSlug\": \"maximum-level-sum-of-a-binary-tree\",\n                \"timestamp\": \"1767694976\",\n                \"statusDisplay\": \"Accepted\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"Maximum Matrix Sum\",\n                \"titleSlug\": \"maximum-matrix-sum\",\n                \"timestamp\": \"1767591824\",\n                \"statusDisplay\": \"Accepted\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"Maximum Matrix Sum\",\n                \"titleSlug\": \"maximum-matrix-sum\",\n                \"timestamp\": \"1767591709\",\n                \"statusDisplay\": \"Accepted\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"Maximum Matrix Sum\",\n                \"titleSlug\": \"maximum-matrix-sum\",\n                \"timestamp\": \"1767591534\",\n                \"statusDisplay\": \"Accepted\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"Four Divisors\",\n                \"titleSlug\": \"four-divisors\",\n                \"timestamp\": \"1767526177\",\n                \"statusDisplay\": \"Accepted\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"Four Divisors\",\n                \"titleSlug\": \"four-divisors\",\n                \"timestamp\": \"1767526051\",\n                \"statusDisplay\": \"Wrong Answer\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"Four Divisors\",\n                \"titleSlug\": \"four-divisors\",\n                \"timestamp\": \"1767524322\",\n                \"statusDisplay\": \"Time Limit Exceeded\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"N-Repeated Element in Size 2N Array\",\n                \"titleSlug\": \"n-repeated-element-in-size-2n-array\",\n                \"timestamp\": \"1767371910\",\n                \"statusDisplay\": \"Accepted\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"N-Repeated Element in Size 2N Array\",\n                \"titleSlug\": \"n-repeated-element-in-size-2n-array\",\n                \"timestamp\": \"1767371872\",\n                \"statusDisplay\": \"Accepted\",\n                \"lang\": \"python3\"\n            },\n            {\n                \"title\": \"N-Repeated Element in Size 2N Array\",\n                \"titleSlug\": \"n-repeated-element-in-size-2n-array\",\n                \"timestamp\": \"1767371148\",\n                \"statusDisplay\": \"Wrong Answer\",\n                \"lang\": \"python3\"\n            }\n        ]\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "6. Language Stats",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Referer",
+						"value": "https://leetcode.com"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query\": \"query languageStats($username: String!) { matchedUser(username: $username) { languageProblemCount { languageName problemsSolved } } }\",\n  \"variables\": { \"username\": \"{{username}}\" }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://leetcode.com/graphql",
+					"protocol": "https",
+					"host": [
+						"leetcode",
+						"com"
+					],
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success_Mar13",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Referer",
+								"value": "https://leetcode.com"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"query languageStats($username: String!) { matchedUser(username: $username) { languageProblemCount { languageName problemsSolved } } }\",\n  \"variables\": { \"username\": \"{{username}}\" }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://leetcode.com/graphql",
+							"protocol": "https",
+							"host": [
+								"leetcode",
+								"com"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 13 Mar 2026 08:13:22 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "vary",
+							"value": "Cookie, Authorization"
+						},
+						{
+							"key": "x-frame-options",
+							"value": "DENY"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "csrftoken=wNr9UdxCpDJGQRHvhXxC6GGnFtVettDN; expires=Fri, 12 Mar 2027 08:13:22 GMT; Max-Age=31449600; Path=/; SameSite=Lax; Secure"
+						},
+						{
+							"key": "strict-transport-security",
+							"value": "max-age=15552000; includeSubDomains; preload"
+						},
+						{
+							"key": "content-security-policy",
+							"value": "frame-ancestors 'self' https://*.leetcode.com https://leetcode.com https://www.growingio.com https://challenges.cloudflare.com"
+						},
+						{
+							"key": "cf-cache-status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "9db994377a01b2bb-BLR"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"matchedUser\": {\n            \"languageProblemCount\": [\n                {\n                    \"languageName\": \"C++\",\n                    \"problemsSolved\": 73\n                },\n                {\n                    \"languageName\": \"Java\",\n                    \"problemsSolved\": 250\n                },\n                {\n                    \"languageName\": \"Python\",\n                    \"problemsSolved\": 3\n                },\n                {\n                    \"languageName\": \"JavaScript\",\n                    \"problemsSolved\": 4\n                },\n                {\n                    \"languageName\": \"Python3\",\n                    \"problemsSolved\": 169\n                }\n            ]\n        }\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "7. Skill Stats",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Referer",
+						"value": "https://leetcode.com"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query\": \"query skillStats($username: String!) { matchedUser(username: $username) { tagProblemCounts { advanced { tagName tagSlug problemsSolved } intermediate { tagName tagSlug problemsSolved } fundamental { tagName tagSlug problemsSolved } } } }\",\n  \"variables\": { \"username\": \"{{username}}\" }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://leetcode.com/graphql",
+					"protocol": "https",
+					"host": [
+						"leetcode",
+						"com"
+					],
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success_Mar13",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Referer",
+								"value": "https://leetcode.com"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"query\": \"query skillStats($username: String!) { matchedUser(username: $username) { tagProblemCounts { advanced { tagName tagSlug problemsSolved } intermediate { tagName tagSlug problemsSolved } fundamental { tagName tagSlug problemsSolved } } } }\",\n  \"variables\": { \"username\": \"{{username}}\" }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://leetcode.com/graphql",
+							"protocol": "https",
+							"host": [
+								"leetcode",
+								"com"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 13 Mar 2026 08:13:41 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "vary",
+							"value": "Cookie, Authorization"
+						},
+						{
+							"key": "x-frame-options",
+							"value": "DENY"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "csrftoken=wNr9UdxCpDJGQRHvhXxC6GGnFtVettDN; expires=Fri, 12 Mar 2027 08:13:41 GMT; Max-Age=31449600; Path=/; SameSite=Lax; Secure"
+						},
+						{
+							"key": "strict-transport-security",
+							"value": "max-age=15552000; includeSubDomains; preload"
+						},
+						{
+							"key": "content-security-policy",
+							"value": "frame-ancestors 'self' https://*.leetcode.com https://leetcode.com https://www.growingio.com https://challenges.cloudflare.com"
+						},
+						{
+							"key": "cf-cache-status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "9db994aa9fb0b2bb-BLR"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"matchedUser\": {\n            \"tagProblemCounts\": {\n                \"advanced\": [\n                    {\n                        \"tagName\": \"Data Stream\",\n                        \"tagSlug\": \"data-stream\",\n                        \"problemsSolved\": 4\n                    },\n                    {\n                        \"tagName\": \"Rolling Hash\",\n                        \"tagSlug\": \"rolling-hash\",\n                        \"problemsSolved\": 1\n                    },\n                    {\n                        \"tagName\": \"Sweep Line\",\n                        \"tagSlug\": \"line-sweep\",\n                        \"problemsSolved\": 2\n                    },\n                    {\n                        \"tagName\": \"Backtracking\",\n                        \"tagSlug\": \"backtracking\",\n                        \"problemsSolved\": 14\n                    },\n                    {\n                        \"tagName\": \"Bitmask\",\n                        \"tagSlug\": \"bitmask\",\n                        \"problemsSolved\": 1\n                    },\n                    {\n                        \"tagName\": \"Quickselect\",\n                        \"tagSlug\": \"quickselect\",\n                        \"problemsSolved\": 3\n                    },\n                    {\n                        \"tagName\": \"Dynamic Programming\",\n                        \"tagSlug\": \"dynamic-programming\",\n                        \"problemsSolved\": 49\n                    },\n                    {\n                        \"tagName\": \"Divide and Conquer\",\n                        \"tagSlug\": \"divide-and-conquer\",\n                        \"problemsSolved\": 12\n                    },\n                    {\n                        \"tagName\": \"Trie\",\n                        \"tagSlug\": \"trie\",\n                        \"problemsSolved\": 4\n                    },\n                    {\n                        \"tagName\": \"Union-Find\",\n                        \"tagSlug\": \"union-find\",\n                        \"problemsSolved\": 7\n                    },\n                    {\n                        \"tagName\": \"Suffix Array\",\n                        \"tagSlug\": \"suffix-array\",\n                        \"problemsSolved\": 1\n                    },\n                    {\n                        \"tagName\": \"Binary Indexed Tree\",\n                        \"tagSlug\": \"binary-indexed-tree\",\n                        \"problemsSolved\": 1\n                    },\n                    {\n                        \"tagName\": \"Segment Tree\",\n                        \"tagSlug\": \"segment-tree\",\n                        \"problemsSolved\": 1\n                    },\n                    {\n                        \"tagName\": \"Monotonic Stack\",\n                        \"tagSlug\": \"monotonic-stack\",\n                        \"problemsSolved\": 5\n                    },\n                    {\n                        \"tagName\": \"Topological Sort\",\n                        \"tagSlug\": \"topological-sort\",\n                        \"problemsSolved\": 3\n                    },\n                    {\n                        \"tagName\": \"Shortest Path\",\n                        \"tagSlug\": \"shortest-path\",\n                        \"problemsSolved\": 2\n                    }\n                ],\n                \"intermediate\": [\n                    {\n                        \"tagName\": \"Tree\",\n                        \"tagSlug\": \"tree\",\n                        \"problemsSolved\": 49\n                    },\n                    {\n                        \"tagName\": \"Binary Tree\",\n                        \"tagSlug\": \"binary-tree\",\n                        \"problemsSolved\": 48\n                    },\n                    {\n                        \"tagName\": \"Hash Table\",\n                        \"tagSlug\": \"hash-table\",\n                        \"problemsSolved\": 74\n                    },\n                    {\n                        \"tagName\": \"Ordered Set\",\n                        \"tagSlug\": \"ordered-set\",\n                        \"problemsSolved\": 1\n                    },\n                    {\n                        \"tagName\": \"Graph Theory\",\n                        \"tagSlug\": \"graph\",\n                        \"problemsSolved\": 8\n                    },\n                    {\n                        \"tagName\": \"Greedy\",\n                        \"tagSlug\": \"greedy\",\n                        \"problemsSolved\": 23\n                    },\n                    {\n                        \"tagName\": \"Binary Search\",\n                        \"tagSlug\": \"binary-search\",\n                        \"problemsSolved\": 35\n                    },\n                    {\n                        \"tagName\": \"Depth-First Search\",\n                        \"tagSlug\": \"depth-first-search\",\n                        \"problemsSolved\": 56\n                    },\n                    {\n                        \"tagName\": \"Breadth-First Search\",\n                        \"tagSlug\": \"breadth-first-search\",\n                        \"problemsSolved\": 44\n                    },\n                    {\n                        \"tagName\": \"Recursion\",\n                        \"tagSlug\": \"recursion\",\n                        \"problemsSolved\": 10\n                    },\n                    {\n                        \"tagName\": \"Sliding Window\",\n                        \"tagSlug\": \"sliding-window\",\n                        \"problemsSolved\": 13\n                    },\n                    {\n                        \"tagName\": \"Bit Manipulation\",\n                        \"tagSlug\": \"bit-manipulation\",\n                        \"problemsSolved\": 11\n                    },\n                    {\n                        \"tagName\": \"Math\",\n                        \"tagSlug\": \"math\",\n                        \"problemsSolved\": 49\n                    },\n                    {\n                        \"tagName\": \"Randomized\",\n                        \"tagSlug\": \"randomized\",\n                        \"problemsSolved\": 4\n                    },\n                    {\n                        \"tagName\": \"Design\",\n                        \"tagSlug\": \"design\",\n                        \"problemsSolved\": 17\n                    },\n                    {\n                        \"tagName\": \"Iterator\",\n                        \"tagSlug\": \"iterator\",\n                        \"problemsSolved\": 3\n                    }\n                ],\n                \"fundamental\": [\n                    {\n                        \"tagName\": \"Array\",\n                        \"tagSlug\": \"array\",\n                        \"problemsSolved\": 192\n                    },\n                    {\n                        \"tagName\": \"Matrix\",\n                        \"tagSlug\": \"matrix\",\n                        \"problemsSolved\": 40\n                    },\n                    {\n                        \"tagName\": \"String\",\n                        \"tagSlug\": \"string\",\n                        \"problemsSolved\": 86\n                    },\n                    {\n                        \"tagName\": \"Simulation\",\n                        \"tagSlug\": \"simulation\",\n                        \"problemsSolved\": 18\n                    },\n                    {\n                        \"tagName\": \"Enumeration\",\n                        \"tagSlug\": \"enumeration\",\n                        \"problemsSolved\": 2\n                    },\n                    {\n                        \"tagName\": \"Sorting\",\n                        \"tagSlug\": \"sorting\",\n                        \"problemsSolved\": 39\n                    },\n                    {\n                        \"tagName\": \"Stack\",\n                        \"tagSlug\": \"stack\",\n                        \"problemsSolved\": 24\n                    },\n                    {\n                        \"tagName\": \"Queue\",\n                        \"tagSlug\": \"queue\",\n                        \"problemsSolved\": 6\n                    },\n                    {\n                        \"tagName\": \"Linked List\",\n                        \"tagSlug\": \"linked-list\",\n                        \"problemsSolved\": 21\n                    },\n                    {\n                        \"tagName\": \"Two Pointers\",\n                        \"tagSlug\": \"two-pointers\",\n                        \"problemsSolved\": 46\n                    }\n                ]\n            }\n        }\n    }\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "username",
+			"value": "spacewanderer"
+		},
+		{
+			"key": "leetcode_session",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfYXV0aF91c2VyX2lkIjoiMTIzNTcyMiIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImFsbGF1dGguYWNjb3VudC5hdXRoX2JhY2tlbmRzLkF1dGhlbnRpY2F0aW9uQmFja2VuZCIsIl9hdXRoX3VzZXJfaGFzaCI6ImU3MDZjOTRiODQwMGY2YjhiZDRhMjc1NTQ5YjllZTJlZmIwMTM5NTNhYWQyZjUwMmEzZmI3Zjc3MGJiODg1YmEiLCJzZXNzaW9uX3V1aWQiOiI3ZTlhYTY5MiIsImlkIjoxMjM1NzIyLCJlbWFpbCI6InNyaW5pdmFzcm9oYW4xMUBnbWFpbC5jb20iLCJ1c2VybmFtZSI6InNwYWNld2FuZGVyZXIiLCJ1c2VyX3NsdWciOiJzcGFjZXdhbmRlcmVyIiwiYXZhdGFyIjoiaHR0cHM6Ly9hc3NldHMubGVldGNvZGUuY29tL3VzZXJzL3NwYWNld2FuZGVyZXIvYXZhdGFyXzE1NTM0NzY2NTMucG5nIiwicmVmcmVzaGVkX2F0IjoxNzczMzYzOTM5LCJpcCI6IjIwMi4xNDEuMzYuOCIsImlkZW50aXR5IjoiZGY0YmYwNGY5YmY3YjZhZjA5ZTNlOTQxNzk3MzM3NzAiLCJkZXZpY2Vfd2l0aF9pcCI6WyIwZmE3Nzk3ODFmMjUxNjhkOTIwMTBhZTBiNTZhMTVhZiIsIjIwMi4xNDEuMzYuOCJdLCJfc2Vzc2lvbl9leHBpcnkiOjEyMDk2MDB9.-l6fez0TENoSdxsymS3hzc8Wne_5EZQDjpNE_2kzi6g"
+		},
+		{
+			"key": "csrf_token",
+			"value": "eV1JvjNCIh0MSxOL5i0tbg9mnW22xsmc"
+		}
+	]
+}

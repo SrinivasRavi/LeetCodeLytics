@@ -1,0 +1,135 @@
+{
+  "info": {
+    "name": "LeetCodeLytics",
+    "description": "All GraphQL queries used by the LeetCodeLytics iOS app against https://leetcode.com/graphql",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "username", "value": "spacewanderer" },
+    { "key": "leetcode_session", "value": "" },
+    { "key": "csrf_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. User Profile",
+      "request": {
+        "method": "POST",
+        "url": "https://leetcode.com/graphql",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Referer", "value": "https://leetcode.com" },
+          { "key": "User-Agent", "value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1" }
+        ],
+        "body": {
+          "mode": "raw",
+          "options": { "raw": { "language": "json" } },
+          "raw": "{\n  \"query\": \"query getUserProfile($username: String!) { matchedUser(username: $username) { username profile { ranking userAvatar realName reputation } submitStats: submitStatsGlobal { acSubmissionNum { difficulty count submissions } totalSubmissionNum { difficulty count submissions } } badges { id name icon creationDate } } }\",\n  \"variables\": { \"username\": \"{{username}}\" }\n}"
+        }
+      }
+    },
+    {
+      "name": "2. All Questions Count",
+      "request": {
+        "method": "POST",
+        "url": "https://leetcode.com/graphql",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Referer", "value": "https://leetcode.com" },
+          { "key": "User-Agent", "value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1" }
+        ],
+        "body": {
+          "mode": "raw",
+          "options": { "raw": { "language": "json" } },
+          "raw": "{\n  \"query\": \"query allQuestionsCount { allQuestionsCount { difficulty count } }\"\n}"
+        }
+      }
+    },
+    {
+      "name": "3. Submission Calendar",
+      "request": {
+        "method": "POST",
+        "url": "https://leetcode.com/graphql",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Referer", "value": "https://leetcode.com" },
+          { "key": "User-Agent", "value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1" }
+        ],
+        "body": {
+          "mode": "raw",
+          "options": { "raw": { "language": "json" } },
+          "raw": "{\n  \"query\": \"query userProfileCalendar($username: String!) { matchedUser(username: $username) { userCalendar { activeYears streak totalActiveDays submissionCalendar } } }\",\n  \"variables\": { \"username\": \"{{username}}\" }\n}"
+        }
+      }
+    },
+    {
+      "name": "4. DCC Streak (auth required)",
+      "request": {
+        "method": "POST",
+        "url": "https://leetcode.com/graphql",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Referer", "value": "https://leetcode.com" },
+          { "key": "User-Agent", "value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1" },
+          { "key": "Cookie", "value": "LEETCODE_SESSION={{leetcode_session}}; csrftoken={{csrf_token}}" },
+          { "key": "x-csrftoken", "value": "{{csrf_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "options": { "raw": { "language": "json" } },
+          "raw": "{\n  \"query\": \"query getStreakCounter { streakCounter { streakCount currentDayCompleted } }\"\n}"
+        }
+      }
+    },
+    {
+      "name": "5. Recent Submissions",
+      "request": {
+        "method": "POST",
+        "url": "https://leetcode.com/graphql",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Referer", "value": "https://leetcode.com" },
+          { "key": "User-Agent", "value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1" }
+        ],
+        "body": {
+          "mode": "raw",
+          "options": { "raw": { "language": "json" } },
+          "raw": "{\n  \"query\": \"query recentSubmissions($username: String!, $limit: Int) { recentSubmissionList(username: $username, limit: $limit) { title titleSlug timestamp statusDisplay lang } }\",\n  \"variables\": { \"username\": \"{{username}}\", \"limit\": 20 }\n}"
+        }
+      }
+    },
+    {
+      "name": "6. Language Stats",
+      "request": {
+        "method": "POST",
+        "url": "https://leetcode.com/graphql",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Referer", "value": "https://leetcode.com" },
+          { "key": "User-Agent", "value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1" }
+        ],
+        "body": {
+          "mode": "raw",
+          "options": { "raw": { "language": "json" } },
+          "raw": "{\n  \"query\": \"query languageStats($username: String!) { matchedUser(username: $username) { languageProblemCount { languageName problemsSolved } } }\",\n  \"variables\": { \"username\": \"{{username}}\" }\n}"
+        }
+      }
+    },
+    {
+      "name": "7. Skill Stats",
+      "request": {
+        "method": "POST",
+        "url": "https://leetcode.com/graphql",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Referer", "value": "https://leetcode.com" },
+          { "key": "User-Agent", "value": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1" }
+        ],
+        "body": {
+          "mode": "raw",
+          "options": { "raw": { "language": "json" } },
+          "raw": "{\n  \"query\": \"query skillStats($username: String!) { matchedUser(username: $username) { tagProblemCounts { advanced { tagName tagSlug problemsSolved } intermediate { tagName tagSlug problemsSolved } fundamental { tagName tagSlug problemsSolved } } } }\",\n  \"variables\": { \"username\": \"{{username}}\" }\n}"
+        }
+      }
+    }
+  ]
+}

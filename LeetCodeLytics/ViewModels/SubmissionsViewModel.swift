@@ -6,7 +6,11 @@ final class SubmissionsViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    private let service = LeetCodeService.shared
+    private let service: LeetCodeServiceProtocol
+
+    init(service: LeetCodeServiceProtocol = LeetCodeService.shared) {
+        self.service = service
+    }
 
     func load(username: String) async {
         let cacheKey = "submissions_\(username)"

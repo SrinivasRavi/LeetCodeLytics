@@ -23,3 +23,16 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
         CURRENT_PROJECT_VERSION: 1
         MARKETING_VERSION: 1.0.0
+        ENABLE_TESTABILITY: YES
+
+  LeetCodeLyticsTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - LeetCodeLyticsTests
+    dependencies:
+      - target: LeetCodeLytics
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.leetcodelytics.app.tests
+        GENERATE_INFOPLIST_FILE: YES
