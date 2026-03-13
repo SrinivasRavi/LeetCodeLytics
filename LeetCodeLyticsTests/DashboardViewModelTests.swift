@@ -18,6 +18,7 @@ final class DashboardViewModelTests: XCTestCase {
     override func tearDown() {
         CacheService.clear(key: "dashboard_spacewanderer")
         CacheService.suiteName = nil
+        UserDefaults.appGroup.removeObject(forKey: "widgetData")
         super.tearDown()
     }
 
@@ -132,6 +133,32 @@ final class DashboardViewModelTests: XCTestCase {
         vm.dccStreak = 5
         await vm.load(username: "spacewanderer")
         XCTAssertEqual(vm.dccStreak, 7)
+    }
+
+    // MARK: - Widget data
+
+    func testLoad_writesWidgetData_toAppGroupDefaults() async {
+        configureAllSucceeding()
+        await vm.load(username: "spacewanderer")
+        let data = UserDefaults.appGroup.data(forKey: "widgetData")
+        XCTAssertNotNil(data, "widgetData must be written to UserDefaults.appGroup after successful load")
+    }
+
+    func testLoad_widgetData_reflectsComputedStats() async {
+        configureAllSucceeding()
+        mock.streakCounterResult = .success(StreakCounterResponse(streakCount: 3, currentDayCompleted: true))
+        await vm.load(username: "spacewanderer")
+
+        guard let raw = UserDefaults.appGroup.data(forKey: "widgetData"),
+              let wd = try? JSONDecoder().decode(WidgetData.self, from: raw) else {
+            XCTFail("widgetData missing or not decodable")
+            return
+        }
+
+        XCTAssertEqual(wd.easySolved, 134)
+        XCTAssertEqual(wd.mediumSolved, 199)
+        XCTAssertEqual(wd.hardSolved, 29)
+        XCTAssertEqual(wd.dccStreak, 3)
     }
 
     // MARK: - Multiple calls

@@ -105,4 +105,38 @@ extension MockLeetCodeService {
             ProblemCount(difficulty: "Hard",   count: 913)
         ]
     }
+
+    static func makeTagProblemCounts() -> TagProblemCounts {
+        TagProblemCounts(
+            advanced: [
+                TagStat(tagName: "Dynamic Programming", tagSlug: "dynamic-programming", problemsSolved: 55),
+                TagStat(tagName: "Binary Search",       tagSlug: "binary-search",        problemsSolved: 40),
+                TagStat(tagName: "Graph",               tagSlug: "graph",                problemsSolved: 30),
+                TagStat(tagName: "Divide and Conquer",  tagSlug: "divide-and-conquer",   problemsSolved: 20),
+                TagStat(tagName: "Segment Tree",        tagSlug: "segment-tree",         problemsSolved: 10),
+                TagStat(tagName: "Trie",                tagSlug: "trie",                 problemsSolved: 8),
+                TagStat(tagName: "Union Find",          tagSlug: "union-find",           problemsSolved: 7),
+                TagStat(tagName: "Topological Sort",    tagSlug: "topological-sort",     problemsSolved: 6),
+                TagStat(tagName: "Monotonic Stack",     tagSlug: "monotonic-stack",      problemsSolved: 5),
+                TagStat(tagName: "Bit Manipulation",    tagSlug: "bit-manipulation",     problemsSolved: 4),
+                TagStat(tagName: "Rolling Hash",        tagSlug: "rolling-hash",         problemsSolved: 2)
+            ],
+            intermediate: [
+                TagStat(tagName: "Tree",        tagSlug: "tree",        problemsSolved: 80),
+                TagStat(tagName: "Hash Table",  tagSlug: "hash-table",  problemsSolved: 70)
+            ],
+            fundamental: [
+                TagStat(tagName: "Array",  tagSlug: "array",  problemsSolved: 200),
+                TagStat(tagName: "String", tagSlug: "string", problemsSolved: 150)
+            ]
+        )
+    }
+
+    static func makeLanguageStats() -> [LanguageStat] {
+        [
+            LanguageStat(languageName: "Python3", problemsSolved: 200),
+            LanguageStat(languageName: "C++",     problemsSolved: 150),
+            LanguageStat(languageName: "Java",    problemsSolved: 12)
+        ]
+    }
 }
