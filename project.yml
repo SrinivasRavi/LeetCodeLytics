@@ -50,9 +50,6 @@ targets:
     sources:
       - LeetCodeLyticsWidget
       - Shared
-    scheme:
-      environmentVariables:
-        _XCWidgetKind: LeetCodeMedium
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.leetcodelytics.app.widget
