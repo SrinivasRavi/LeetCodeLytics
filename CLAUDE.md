@@ -112,6 +112,65 @@ These rules exist because the same classes of bugs kept recurring. Each rule has
 
 ---
 
+## Widget Post-Mortem (v2.0 → v2.10)
+
+It took 10 versions to get widgets working. This section documents exactly what went wrong and why, so future widget work starts correctly.
+
+### What happened, version by version
+
+| Version | Change | Why it didn't work |
+|---------|--------|-------------------|
+| v2.0 | Added `WidgetFetcher` making 3 network calls in `getTimeline` | Network calls OOM-killed the extension on every cold start |
+| v2.3 | Moved `.containerBackground` to `StaticConfiguration` closure | Correct API placement, but the banner was caused by OOM crash, not API placement |
+| v2.4 | Made network calls sequential instead of concurrent | Reduced peak memory slightly, still reliably exceeded 30 MB |
+| v2.7 | Cache-first `getTimeline` — skip network if cache < 30 min old | Only helped after main app had run; fresh widget add with no cache still OOM'd |
+| v2.8 | Moved `widgetURL` inside views; fixed foreground colors; padded small views | Unrelated to the actual crash |
+| v2.9 | Removed images from all widget views | Reduced memory slightly; did not fix the crash |
+| **v2.10** | **Deleted `WidgetFetcher`; widget never makes network calls** | **Correct fix** |
+
+### The actual root cause
+
+Widget extensions have a hard **30 MB memory ceiling**. Three sequential GraphQL responses — especially the LeetCode submission calendar, which encodes a full year of daily counts as a large JSON string — reliably pushed the extension over this limit. When the extension is killed by the OS, iOS cannot get a rendered result from `getTimeline` or `getSnapshot`, and displays a generic failure state: the "Please adopt containerBackground API" banner.
+
+**The banner is NOT a containerBackground API error.** It is iOS's fallback render when the widget extension crashes for any reason. This was the core misdiagnosis that drove 7 wasted versions.
+
+### Why the diagnosis took so long
+
+1. **Took the error message at face value.** "Please adopt containerBackground API" is an OS-level overlay whose text describes one specific cause. It also appears on crash. There are no other visual signals to distinguish the two.
+
+2. **The large widget working was a misleading clue.** It worked only because its timeline happened to run after the main app had written fresh App Group cache (making the `cacheIsFresh` check pass and skipping network calls). Small/medium timelines ran when no cache existed. This looked like a rendering difference, not a timing/memory difference.
+
+3. **Incremental memory fixes (sequential calls, image removal) showed partial progress.** Each change moved the problem slightly but didn't eliminate it. This created false confidence that the approach was correct.
+
+4. **The OOM crash log was visible from v2.2 onwards** (screenshot 6.png showed `EXC_RESOURCE RESOURCE_TYPE_MEMORY`). The right response was: "why is the widget extension hitting 30 MB?" and "what is the correct architecture for a widget with a large data response?" Instead, the focus stayed on the symptom.
+
+5. **No upfront architecture research.** Apple's WidgetKit documentation explicitly states that widget extensions should read from a shared container populated by the containing app. `WidgetFetcher` was the wrong design from line 1 of v2.0.
+
+### The correct architecture (should have been v2.0)
+
+```
+Main app opens
+  → DashboardViewModel.load() fetches all data
+  → Writes WidgetData to App Group UserDefaults
+  → Calls WidgetCenter.shared.reloadAllTimelines()
+
+Widget extension
+  → getTimeline: reads App Group → calls completion immediately
+  → No network, no async, no Task, no OOM possible
+```
+
+`Provider.getTimeline` in its final correct form is 3 lines. `WidgetFetcher.swift` was 130 lines that should never have existed.
+
+### Rules derived from this post-mortem
+
+These are now in Development Standards above. Summary:
+- **Never make network calls in a widget extension.** The memory budget (~30 MB) is too small for LeetCode's calendar response.
+- **"Please adopt containerBackground API" does not always mean your containerBackground is wrong.** Check for extension crashes first.
+- **When a widget error is inconsistent** (some widget sizes work, others don't), suspect timing/memory, not rendering code.
+- **Read the documentation before writing new platform APIs.** The architecture was wrong from v2.0 because the memory limit and App Group data-flow pattern weren't checked first.
+
+---
+
 ## Commit Rule — Tests Must Pass
 
 **Run the full test suite before every commit.** No exceptions.
@@ -123,7 +182,7 @@ DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer \
   2>&1 | grep -E '(error:|passed|failed|BUILD)'
 ```
 
-All 77 tests must pass. If any fail, fix before committing.
+All 106 tests must pass. If any fail, fix before committing.
 
 ---
 
@@ -157,7 +216,7 @@ DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer \
 
 ---
 
-## Directory Layout — Current (v1.6.0)
+## Directory Layout — Current (v2.10.0)
 
 ```
 LeetCodeLytics/                          ← repo root
@@ -204,13 +263,38 @@ LeetCodeLytics/                          ← repo root
     LeetCodeServiceExecuteTests.swift
     DashboardViewModelTests.swift
     SubmissionsViewModelTests.swift
+  LeetCodeLyticsWidget/                  ← widget extension (v2.0+)
+    Provider.swift                       ← TimelineProvider; reads App Group only, NO network calls
+    LeetCodeLyticsWidget.swift           ← WidgetBundle; containerBackground in each StaticConfiguration closure
+    WidgetViews.swift                    ← 4 widget views (text/emoji only); widgetURL inside each body
+    Info.plist
+    LeetCodeLyticsWidget.entitlements    ← App Group: group.com.leetcodelytics.shared
+  Shared/                                ← compiled into both app and widget targets
+    WidgetData.swift                     ← Codable struct; written by app, read by widget
+    SubmissionCalendar.swift             ← double-decode helper
+    StreakCalculator.swift               ← streak computation (UTC)
+    ColorExtension.swift
+    SharedAssets.xcassets/               ← AstroLeet image (all 3 resolution slots filled)
+  LeetCodeLyticsTests/
+    Mocks/
+      MockLeetCodeService.swift
+      MockURLProtocol.swift
+    ModelDecodeTests.swift
+    StreakCalculatorTests.swift
+    SubmissionCalendarTests.swift
+    CacheServiceTests.swift
+    LeetCodeServiceExecuteTests.swift
+    DashboardViewModelTests.swift
+    SubmissionsViewModelTests.swift
+    WidgetDataTests.swift
+    SkillsViewModelTests.swift
+    InfoPlistTests.swift
+    MemoryLeakTests.swift
   PersonalNotes/                         ← never commit credentials here (gitignore if needed)
     PersonalNotes.md
     BugAudit.md
     LeetCodeLytics.postman_collection.json
 ```
-
-**V2.0 will add:** `LeetCodeLytics.entitlements`, `LeetCodeLyticsWidget.entitlements`, `LeetCodeLyticsWidget/` target, `Shared/` folder
 
 ---
 
@@ -370,7 +454,7 @@ query skillStats($username: String!) {
 
 ---
 
-## Test Suite (77 tests)
+## Test Suite (106 tests)
 
 | File | Coverage |
 |------|----------|
@@ -379,8 +463,12 @@ query skillStats($username: String!) {
 | `StreakCalculatorTests` | empty, old solves, today/yesterday, gaps, consecutive runs |
 | `SubmissionCalendarTests` | valid JSON, empty, invalid, non-numeric keys, large calendar |
 | `CacheServiceTests` | save/load, timestamps, stale logic, clear, key isolation |
-| `DashboardViewModelTests` | load, errors, DCC preservation regression, isLoading transitions |
+| `DashboardViewModelTests` | load, errors, DCC preservation regression, isLoading, widget data write |
 | `SubmissionsViewModelTests` | load, errors, empty state, multiple calls |
+| `WidgetDataTests` | Codable round-trip, fetchedAt, legacy decode (nil fetchedAt), placeholder |
+| `SkillsViewModelTests` | load, top-10 cap, sort order, empty state, multiple calls |
+| `InfoPlistTests` | version ≠ "1.0" placeholder, non-empty, bundle ID prefix |
+| `MemoryLeakTests` | All three ViewModels deallocate with and without load |
 
 **Adding a new model or API call requires:**
 1. A fixture decode test in `ModelDecodeTests` using a real API response sample
@@ -424,17 +512,6 @@ query skillStats($username: String!) {
 5. **No business logic in Views** — all derivation in ViewModels
 6. **Username always read from `@AppStorage("username")`** — single source of truth
 7. **All ViewModels accept injected `LeetCodeServiceProtocol`** — default = `LeetCodeService.shared`; required for testing
-
----
-
-## V2.0 Preparation Checklist
-
-Before starting V2.0:
-- [x] All 77 tests pass (v1.6.0)
-- [ ] App verified working on device (v1.6.0)
-- [x] `CacheService.suiteName` is nil (ready for one-line change to App Groups)
-- [x] `SubmissionCalendar` and `StreakCalculator` have no UIKit/SwiftUI imports
-- [x] Dead code removed (Contest system, Calendar VM/View)
 
 ---
 
