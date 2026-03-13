@@ -23,14 +23,6 @@ struct SkillStatsMatchedUser: Codable {
     let tagProblemCounts: TagProblemCounts
 }
 
-struct SkillStats: Codable {
-    let matchedUser: SkillStatsMatchedUser
-}
-
 struct LanguageStatsMatchedUser: Codable {
     let languageProblemCount: [LanguageStat]
-}
-
-struct LanguageStatsResponse: Codable {
-    let matchedUser: LanguageStatsMatchedUser
 }

@@ -6,33 +6,43 @@ struct SubmissionsView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
+            // ScrollView wraps all states so .refreshable works even when the
+            // list is empty or an error is showing — not just when data is present.
+            ScrollView {
                 if vm.isLoading && vm.submissions.isEmpty {
                     ProgressView("Loading...")
                         .frame(maxWidth: .infinity, minHeight: 300)
                 } else if !vm.submissions.isEmpty {
-                    List(vm.submissions) { submission in
-                        SubmissionRow(submission: submission)
-                            .listRowBackground(Color(UIColor.secondarySystemBackground))
+                    LazyVStack(spacing: 0) {
+                        ForEach(vm.submissions) { submission in
+                            SubmissionRow(submission: submission)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                            Divider()
+                                .padding(.leading, 16)
+                        }
                     }
-                    .listStyle(.insetGrouped)
-                    .scrollContentBackground(.hidden)
-                    .refreshable {
-                        await vm.load(username: username)
-                    }
+                    .background(Color(UIColor.secondarySystemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding()
                 } else if let error = vm.errorMessage {
                     ContentUnavailableView(
                         "Failed to Load",
                         systemImage: "wifi.slash",
                         description: Text(error)
                     )
+                    .frame(minHeight: 300)
                 } else {
                     ContentUnavailableView(
                         "No Submissions",
                         systemImage: "tray",
                         description: Text("No recent submissions found.")
                     )
+                    .frame(minHeight: 300)
                 }
+            }
+            .refreshable {
+                await vm.load(username: username)
             }
             .navigationTitle("Submissions")
             .toolbar {

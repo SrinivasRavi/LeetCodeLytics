@@ -154,25 +154,25 @@ private struct Last52WeeksCard: View {
     }
 }
 
+private let badgeInputFormatter: DateFormatter = {
+    let df = DateFormatter()
+    df.dateFormat = "yyyy-MM-dd"
+    return df
+}()
+
+private let badgeDisplayFormatter: DateFormatter = {
+    let df = DateFormatter()
+    df.dateStyle = .medium
+    df.timeStyle = .none
+    return df
+}()
+
 private struct BadgesView: View {
     let badges: [UserBadge]
 
-    private let inputFormatter: DateFormatter = {
-        let df = DateFormatter()
-        df.dateFormat = "yyyy-MM-dd"
-        return df
-    }()
-
-    private let displayFormatter: DateFormatter = {
-        let df = DateFormatter()
-        df.dateStyle = .medium
-        df.timeStyle = .none
-        return df
-    }()
-
     private func formattedDate(_ raw: String?) -> String? {
-        guard let raw, let date = inputFormatter.date(from: raw) else { return nil }
-        return displayFormatter.string(from: date)
+        guard let raw, let date = badgeInputFormatter.date(from: raw) else { return nil }
+        return badgeDisplayFormatter.string(from: date)
     }
 
     var body: some View {

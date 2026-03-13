@@ -9,9 +9,9 @@ programmatically. The user must be able to open the `.xcodeproj` and hit ⌘R wi
 
 ## Current State
 
-**Shipped: v1.6.0** (branch: `main`)
+**Shipped: v2.6.0** (branch: `main`)
 
-All v1.x features are complete and working on device. The app is stable and ready for V2.0 development.
+Widgets live. App + widget stable. 104 tests pass.
 
 ---
 
@@ -44,13 +44,63 @@ UI fixes from hands-on testing: streak card layout, badge deduplication, pull-to
 - Removed dead `statusColor: String` from `RecentSubmission` (duplicate of `SkillsView` color mapping)
 - Removed unused `import Charts` from `SkillsView`
 
-### Version 2.0 — Widgets (next)
-Add widget extension on top of v1.6.0.
-- Migrate `CacheService` suiteName from nil → `group.com.leetcodelytics.shared` (one-line change)
-- Add `LeetCodeLytics.entitlements` + `LeetCodeLyticsWidget.entitlements` with App Groups
-- Add `Shared/` folder (move `SubmissionCalendar.swift`, `StreakCalculator.swift` there)
-- Add `LeetCodeLyticsWidget` target with all widget sizes + lock screen
-Git tag: `v2.0`
+### v2.0–v2.6 — Widgets & Stability ✅
+- v2.0: WidgetKit extension — 4 widgets (2 small, medium, large), App Groups, `WidgetFetcher`, `WidgetData` in `Shared/`, astroLeet logo, deep link
+- v2.1: Test suite expanded to 98 tests (WidgetData, SkillsViewModel, InfoPlist, DashboardViewModel widget tests)
+- v2.2: Memory leak tests (104 tests); static analysis clean
+- v2.3: Fix "Please adopt containerBackground API" — moved `.containerBackground` to `StaticConfiguration` closure (was incorrectly placed inside view body)
+- v2.4: Widget network fetches made sequential to stay within ~30MB extension memory budget
+- v2.5: Widget scheme removed from Xcode — prevents accidental widget-only deploy (always use `LeetCodeLytics` scheme)
+- v2.6: Audit fixes — Cancel button bug (logged user out), 4 dead model structs removed, static DateFormatter/Calendar in HeatmapGridView and BadgesView, SubmissionsView refreshable on all states
+
+---
+
+## Development Standards
+
+These rules exist because the same classes of bugs kept recurring. Each rule has a root cause.
+
+### Versioning
+- **PATCH** (x.y.Z): genuine one-line bug fix only — nothing else
+- **MINOR** (x.Y.0): new feature, new file, new tests, significant fix — default for most work
+- **MAJOR** (X.0.0): major milestone (e.g. WidgetKit launch)
+- Bump version on **every** source code change, no exceptions
+
+### Deploying to Device
+- **Always run the `LeetCodeLytics` scheme** — never the widget scheme
+- Running the widget scheme installs only the extension; the main app on device stays at whatever version was last installed via the main scheme
+- Widget scheme was deliberately removed from the project to prevent this mistake
+
+### WidgetKit
+- `.containerBackground(for: .widget)` **must** be applied in the `StaticConfiguration` content closure — NOT inside a view's `body`. WidgetKit scans the closure root; placement inside `body` is undetected and causes the "Please adopt containerBackground API" system overlay.
+
+### DateFormatter / Calendar / NumberFormatter
+- **Never** create `DateFormatter`, `Calendar`, `RelativeDateTimeFormatter`, or `NumberFormatter` inside a computed property, view `body`, or instance `let` property of a SwiftUI View
+- All formatters and calendars must be **file-level `private let`** constants (lazily initialized once per process)
+- Reason: SwiftUI recreates view structs on every parent body evaluation. Instance properties are recreated with them. `DateFormatter` init is expensive (~0.5ms); in a 364-cell heatmap that's ~180ms per render.
+
+### SwiftUI view bodies
+- Never put sorting, filtering, or date arithmetic in a `body`. Compute in ViewModel or as a local `let` at the top of `body` (computed once per render, not per-cell)
+- `weeks` in `HeatmapGridView` is an example: it must be computed once then shared between the grid and month labels — not via two separate computed property calls
+
+### Sheets / Modals — Cancel buttons
+- Cancel buttons **must** use `@Environment(\.dismiss)` — never call the completion/save callback with empty data
+- Calling `onSave("")` from Cancel is indistinguishable from saving an empty username, which clears `@AppStorage("username")` and sends the user to onboarding
+
+### Dead model structs
+- When a service stops using a response wrapper struct, delete it immediately in the same commit
+- Never leave unused `Codable` structs around "in case we need them later" — they're invisible dead weight and confuse future audits
+- Rule: if a struct is not referenced by any service, ViewModel, or test, it must be deleted
+
+### Pull-to-refresh
+- **Every scrollable view must support pull-to-refresh in all states** — loading, data, empty, and error
+- If you use `List`, move to `ScrollView + LazyVStack` so `.refreshable` can be placed on the outer container and applies uniformly
+- An error state with no pull-to-refresh forces the user to navigate away and back
+
+### Tests required for
+- Every new model → `ModelDecodeTests` fixture test
+- Every new ViewModel method → ViewModel test covering success, failure, loading state
+- Every new widget data path → encode/decode round-trip test
+- Every bug fix → regression test that would have caught it
 
 ---
 

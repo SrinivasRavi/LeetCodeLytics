@@ -11,10 +11,6 @@ struct UserCalendarWrapper: Codable {
     let userCalendar: StreakData
 }
 
-struct CalendarMatchedUser: Codable {
-    let matchedUser: UserCalendarWrapper
-}
-
 struct StreakCounterResponse: Codable {
     let streakCount: Int
     let currentDayCompleted: Bool

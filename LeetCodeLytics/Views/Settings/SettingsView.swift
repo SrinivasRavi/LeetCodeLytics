@@ -1,5 +1,11 @@
 import SwiftUI
 
+private let settingsRelativeFormatter: RelativeDateTimeFormatter = {
+    let f = RelativeDateTimeFormatter()
+    f.unitsStyle = .full
+    return f
+}()
+
 struct SettingsView: View {
     @AppStorage("username", store: .appGroup) private var username = ""
     @AppStorage("leetcodeSession", store: .appGroup) private var leetcodeSession = ""
@@ -15,9 +21,7 @@ struct SettingsView: View {
     private var lastUpdatedText: String {
         guard lastUpdated > 0 else { return "Never" }
         let date = Date(timeIntervalSince1970: lastUpdated)
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .full
-        return formatter.localizedString(for: date, relativeTo: Date())
+        return settingsRelativeFormatter.localizedString(for: date, relativeTo: Date())
     }
 
     var body: some View {
@@ -110,6 +114,7 @@ private struct UsernameChangeSheet: View {
     @Binding var isValidating: Bool
     @Binding var validationError: String?
     let onSave: (String) -> Void
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
@@ -128,7 +133,7 @@ private struct UsernameChangeSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { onSave("") }
+                    Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { validate() }
