@@ -15,7 +15,6 @@ struct UserProfileInfo: Codable {
     let ranking: Int
     let userAvatar: String
     let realName: String
-    let reputation: Int
 }
 
 struct UserBadge: Codable {

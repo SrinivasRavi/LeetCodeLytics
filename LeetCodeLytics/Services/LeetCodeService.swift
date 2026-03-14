@@ -127,7 +127,7 @@ final class LeetCodeService: LeetCodeServiceProtocol {
         query getUserProfile($username: String!) {
           matchedUser(username: $username) {
             username
-            profile { ranking userAvatar realName reputation }
+            profile { ranking userAvatar realName }
             submitStats: submitStatsGlobal {
               acSubmissionNum { difficulty count submissions }
               totalSubmissionNum { difficulty count submissions }
@@ -153,7 +153,7 @@ final class LeetCodeService: LeetCodeServiceProtocol {
         query userProfileCalendar($username: String!, $year: Int) {
           matchedUser(username: $username) {
             userCalendar(year: $year) {
-              activeYears streak totalActiveDays submissionCalendar
+              streak totalActiveDays submissionCalendar
             }
           }
         }

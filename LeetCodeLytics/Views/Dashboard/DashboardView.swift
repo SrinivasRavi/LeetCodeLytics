@@ -1,5 +1,12 @@
 import SwiftUI
 
+// File-level static — RelativeDateTimeFormatter init is expensive; create once per process.
+private let dashboardRelativeFormatter: RelativeDateTimeFormatter = {
+    let f = RelativeDateTimeFormatter()
+    f.unitsStyle = .abbreviated
+    return f
+}()
+
 struct DashboardView: View {
     @AppStorage("username", store: .appGroup) private var username = ""
     @StateObject private var vm = DashboardViewModel()
@@ -91,9 +98,7 @@ struct DashboardView: View {
     private func refreshTimestamp() {
         let cacheKey = "dashboard_\(username)"
         guard let ts = CacheService.timestamp(for: cacheKey) else { return }
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .abbreviated
-        lastUpdatedText = "Updated \(formatter.localizedString(for: ts, relativeTo: Date()))"
+        lastUpdatedText = "Updated \(dashboardRelativeFormatter.localizedString(for: ts, relativeTo: Date()))"
     }
 }
 

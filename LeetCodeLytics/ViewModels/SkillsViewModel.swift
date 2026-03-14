@@ -14,9 +14,10 @@ final class SkillsViewModel: ObservableObject {
         self.service = service
     }
 
-    var topAdvanced: [TagStat] { Array((tagCounts?.advanced ?? []).sorted { $0.problemsSolved > $1.problemsSolved }.prefix(10)) }
-    var topIntermediate: [TagStat] { Array((tagCounts?.intermediate ?? []).sorted { $0.problemsSolved > $1.problemsSolved }.prefix(10)) }
-    var topFundamental: [TagStat] { Array((tagCounts?.fundamental ?? []).sorted { $0.problemsSolved > $1.problemsSolved }.prefix(10)) }
+    // Stored @Published arrays — sorted once at fetch/cache time, not on every access.
+    @Published private(set) var topAdvanced: [TagStat] = []
+    @Published private(set) var topIntermediate: [TagStat] = []
+    @Published private(set) var topFundamental: [TagStat] = []
 
     func load(username: String) async {
         guard !activeFetch else { return }
@@ -28,6 +29,7 @@ final class SkillsViewModel: ObservableObject {
         if let cached = CacheService.load(SkillsCache.self, key: cacheKey) {
             tagCounts = cached.tagCounts
             languageStats = cached.languageStats
+            updateTopTags(from: cached.tagCounts)
         }
 
         isLoading = tagCounts == nil
@@ -39,6 +41,7 @@ final class SkillsViewModel: ObservableObject {
         do {
             let (skills, langs) = try await (skillsTask, langTask)
             tagCounts = skills
+            updateTopTags(from: skills)
             languageStats = langs.sorted { $0.problemsSolved > $1.problemsSolved }
             CacheService.save(SkillsCache(tagCounts: skills, languageStats: languageStats), key: cacheKey)
             CacheService.saveTimestamp(for: cacheKey)
@@ -47,6 +50,12 @@ final class SkillsViewModel: ObservableObject {
         }
 
         isLoading = false
+    }
+
+    private func updateTopTags(from counts: TagProblemCounts) {
+        topAdvanced = Array(counts.advanced.sorted { $0.problemsSolved > $1.problemsSolved }.prefix(10))
+        topIntermediate = Array(counts.intermediate.sorted { $0.problemsSolved > $1.problemsSolved }.prefix(10))
+        topFundamental = Array(counts.fundamental.sorted { $0.problemsSolved > $1.problemsSolved }.prefix(10))
     }
 }
 

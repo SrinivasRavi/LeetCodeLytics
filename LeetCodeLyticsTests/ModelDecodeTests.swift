@@ -45,8 +45,7 @@ final class ModelDecodeTests: XCTestCase {
           "profile": {
             "ranking": 327632,
             "userAvatar": "https://assets.leetcode.com/users/spacewanderer/avatar_1553476653.png",
-            "realName": "spaceTimeWanderer",
-            "reputation": 9
+            "realName": "spaceTimeWanderer"
           },
           "submitStats": {
             "acSubmissionNum": [
@@ -83,7 +82,7 @@ final class ModelDecodeTests: XCTestCase {
     func testMatchedUser_emptyBadges() throws {
         let json = """
         {
-          "username": "test","profile":{"ranking":1,"userAvatar":"","realName":"","reputation":0},
+          "username": "test","profile":{"ranking":1,"userAvatar":"","realName":""},
           "submitStats":{"acSubmissionNum":[],"totalSubmissionNum":[]},"badges":[]
         }
         """
@@ -113,7 +112,6 @@ final class ModelDecodeTests: XCTestCase {
     func testStreakData_fullDecode() throws {
         let json = """
         {
-          "activeYears": [2018,2019,2020,2021,2022,2024,2025,2026],
           "streak": 10,
           "totalActiveDays": 107,
           "submissionCalendar": "{\\"1767225600\\": 1, \\"1767312000\\": 5}"
@@ -122,7 +120,6 @@ final class ModelDecodeTests: XCTestCase {
         let data = try decode(StreakData.self, from: json)
         XCTAssertEqual(data.streak, 10)
         XCTAssertEqual(data.totalActiveDays, 107)
-        XCTAssertEqual(data.activeYears.count, 8)
         XCTAssertFalse(data.submissionCalendar.isEmpty)
     }
 
@@ -130,7 +127,6 @@ final class ModelDecodeTests: XCTestCase {
         let json = """
         {
           "userCalendar": {
-            "activeYears": [2024, 2025],
             "streak": 5,
             "totalActiveDays": 50,
             "submissionCalendar": "{}"
@@ -250,7 +246,7 @@ final class ModelDecodeTests: XCTestCase {
         let json = """
         {
           "username":"test","newUnknownField":"someValue",
-          "profile":{"ranking":1,"userAvatar":"","realName":"","reputation":0,"newField":true},
+          "profile":{"ranking":1,"userAvatar":"","realName":"","newField":true},
           "submitStats":{"acSubmissionNum":[],"totalSubmissionNum":[]},
           "badges":[]
         }

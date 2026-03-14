@@ -67,8 +67,7 @@ extension MockLeetCodeService {
             profile: UserProfileInfo(
                 ranking: 327632,
                 userAvatar: "https://assets.leetcode.com/users/spacewanderer/avatar.png",
-                realName: "spaceTimeWanderer",
-                reputation: 9
+                realName: "spaceTimeWanderer"
             ),
             submitStats: SubmitStats(
                 acSubmissionNum: [
@@ -93,8 +92,7 @@ extension MockLeetCodeService {
     }
 
     static func makeStreakData(submissionCalendar: String = "{}") -> StreakData {
-        StreakData(streak: 10, totalActiveDays: 107,
-                  activeYears: [2024, 2025], submissionCalendar: submissionCalendar)
+        StreakData(streak: 10, totalActiveDays: 107, submissionCalendar: submissionCalendar)
     }
 
     static func makeProblemCounts() -> [ProblemCount] {

@@ -63,7 +63,7 @@ struct HeatmapGridView: View {
         var labels: [(String, Int)] = []
         var lastMonth = -1
         for (idx, week) in weeks.enumerated() {
-            if let firstDate = week.first(where: { $0 != nil }) as? Date {
+            if let firstDate = week.compactMap({ $0 }).first {
                 let month = heatmapCalendar.component(.month, from: firstDate)
                 if month != lastMonth {
                     labels.append((heatmapMonthFormatter.string(from: firstDate), idx))
