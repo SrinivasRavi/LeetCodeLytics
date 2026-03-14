@@ -38,7 +38,7 @@ The distinction matters: a unit test that passes with a mock can hide a real int
 
 ## Current State
 
-**Shipped: v2.11.0** (branch: `main`)
+**Shipped: v2.12.0** (branch: `main`)
 
 Widgets live. App + widget stable. 106 tests pass.
 
@@ -81,6 +81,14 @@ UI fixes from hands-on testing: streak card layout, badge deduplication, pull-to
 - v2.4: Widget network fetches made sequential to stay within ~30MB extension memory budget
 - v2.5: Widget scheme removed from Xcode — prevents accidental widget-only deploy (always use `LeetCodeLytics` scheme)
 - v2.6: Audit fixes — Cancel button bug (logged user out), 4 dead model structs removed, static DateFormatter/Calendar in HeatmapGridView and BadgesView, SubmissionsView refreshable on all states
+
+### v2.12.0 — Widget Redesign ✅
+- All 4 widgets now use `astroWidget1.png` as background image (via `containerBackground`)
+- Small widgets: two-line layout — "⚡/🔥 N days" on line 1, streak label on line 2
+- Medium widget: updated `StreakPill` to same two-line format; "Easy/Medium/Hard" full words instead of "E/M/H"
+- Large widget: same streak/difficulty updates; heatmap expanded from 10 to 25 weeks; month labels added
+- `DashboardViewModel` now writes 25 weeks of calendar data to App Group (was 10)
+- Added `AstroWidget1` image set to `Shared/SharedAssets.xcassets`
 
 ### v2.11.0 — Codebase Audit & Cleanup ✅
 - `StreakCalculator.computeStreak()`: added `private static let utcCalendar` (was creating Calendar on every call — CLAUDE.md violation)

@@ -8,16 +8,14 @@ struct SmallSolvedWidgetView: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            Text("⚡")
-                .font(.system(size: 34))
-            Text("\(entry.data.anysolveStreak)")
-                .font(.system(size: 30, weight: .bold, design: .rounded))
+            Text("⚡ \(entry.data.anysolveStreak) days")
+                .font(.system(size: 22, weight: .bold, design: .rounded))
                 .foregroundStyle(Color.white)
-            Text("days solved")
-                .font(.caption2)
-                .foregroundStyle(Color(white: 0.6))
+            Text("Solved Streak")
+                .font(.caption)
+                .foregroundStyle(Color(white: 0.75))
+                .multilineTextAlignment(.center)
         }
-        .padding(8)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .widgetURL(URL(string: "leetcodelytics://dashboard"))
     }
@@ -30,16 +28,14 @@ struct SmallDCCWidgetView: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            Text("🔥")
-                .font(.system(size: 34))
-            Text("\(entry.data.dccStreak)")
-                .font(.system(size: 30, weight: .bold, design: .rounded))
+            Text("🔥 \(entry.data.dccStreak) days")
+                .font(.system(size: 22, weight: .bold, design: .rounded))
                 .foregroundStyle(Color.white)
-            Text("daily streak")
-                .font(.caption2)
-                .foregroundStyle(Color(white: 0.6))
+            Text("Daily Question Streak")
+                .font(.caption)
+                .foregroundStyle(Color(white: 0.75))
+                .multilineTextAlignment(.center)
         }
-        .padding(8)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .widgetURL(URL(string: "leetcodelytics://dashboard"))
     }
@@ -52,14 +48,14 @@ struct MediumWidgetView: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            StreakPill(icon: "⚡", value: entry.data.anysolveStreak, label: "Solved")
+            StreakPill(icon: "⚡", value: entry.data.anysolveStreak, label: "Solved Streak")
                 .frame(maxWidth: .infinity)
 
             Divider()
                 .background(Color(white: 0.3))
                 .frame(height: 50)
 
-            StreakPill(icon: "🔥", value: entry.data.dccStreak, label: "Daily Q")
+            StreakPill(icon: "🔥", value: entry.data.dccStreak, label: "Daily Question Streak")
                 .frame(maxWidth: .infinity)
 
             Divider()
@@ -67,9 +63,9 @@ struct MediumWidgetView: View {
                 .frame(height: 50)
 
             VStack(spacing: 4) {
-                DifficultyDot(label: "E", value: entry.data.easySolved, color: .green)
-                DifficultyDot(label: "M", value: entry.data.mediumSolved, color: .orange)
-                DifficultyDot(label: "H", value: entry.data.hardSolved, color: .red)
+                DifficultyDot(label: "Easy",   value: entry.data.easySolved,   color: .green)
+                DifficultyDot(label: "Medium", value: entry.data.mediumSolved, color: .orange)
+                DifficultyDot(label: "Hard",   value: entry.data.hardSolved,   color: .red)
             }
             .frame(maxWidth: .infinity)
         }
@@ -85,18 +81,18 @@ struct LargeWidgetView: View {
     let entry: LeetCodeEntry
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 0) {
-                StreakPill(icon: "⚡", value: entry.data.anysolveStreak, label: "Solved")
+                StreakPill(icon: "⚡", value: entry.data.anysolveStreak, label: "Solved Streak")
                     .frame(maxWidth: .infinity)
-                StreakPill(icon: "🔥", value: entry.data.dccStreak, label: "Daily Q")
+                StreakPill(icon: "🔥", value: entry.data.dccStreak, label: "Daily Question Streak")
                     .frame(maxWidth: .infinity)
             }
 
             HStack(spacing: 16) {
-                DifficultyDot(label: "E", value: entry.data.easySolved, color: .green)
-                DifficultyDot(label: "M", value: entry.data.mediumSolved, color: .orange)
-                DifficultyDot(label: "H", value: entry.data.hardSolved, color: .red)
+                DifficultyDot(label: "Easy",   value: entry.data.easySolved,   color: .green)
+                DifficultyDot(label: "Medium", value: entry.data.mediumSolved, color: .orange)
+                DifficultyDot(label: "Hard",   value: entry.data.hardSolved,   color: .red)
             }
 
             Divider().background(Color(white: 0.3))
@@ -121,15 +117,14 @@ private struct StreakPill: View {
     let label: String
 
     var body: some View {
-        VStack(spacing: 2) {
-            Text(icon)
-                .font(.system(size: 20))
-            Text("\(value)")
-                .font(.system(size: 22, weight: .bold, design: .rounded))
+        VStack(spacing: 3) {
+            Text("\(icon) \(value) days")
+                .font(.system(size: 16, weight: .bold, design: .rounded))
                 .foregroundStyle(Color.white)
             Text(label)
                 .font(.system(size: 10))
-                .foregroundStyle(Color(white: 0.6))
+                .foregroundStyle(Color(white: 0.65))
+                .multilineTextAlignment(.center)
         }
     }
 }
@@ -160,9 +155,16 @@ private let widgetHeatmapCalendar: Calendar = {
     return cal
 }()
 
+private let widgetMonthFormatter: DateFormatter = {
+    let df = DateFormatter()
+    df.dateFormat = "MMM"
+    df.timeZone = TimeZone(identifier: "UTC")
+    return df
+}()
+
 struct WidgetHeatmapView: View {
     let recentCalendar: [String: Int]
-    private let weeks = 10
+    private let weeks = 25
     private let cellSize: CGFloat = 10
     private let spacing: CGFloat = 2
 
@@ -198,17 +200,50 @@ struct WidgetHeatmapView: View {
         return result
     }
 
+    private func monthLabels(from allWeeks: [[Date?]]) -> [(String, Int)] {
+        var labels: [(String, Int)] = []
+        var lastMonth = -1
+        for (idx, week) in allWeeks.enumerated() {
+            if let firstDate = week.compactMap({ $0 }).first {
+                let month = widgetHeatmapCalendar.component(.month, from: firstDate)
+                if month != lastMonth {
+                    labels.append((widgetMonthFormatter.string(from: firstDate), idx))
+                    lastMonth = month
+                }
+            }
+        }
+        return labels
+    }
+
     var body: some View {
-        HStack(alignment: .top, spacing: spacing) {
-            ForEach(Array(weekDates.enumerated()), id: \.offset) { _, week in
-                VStack(spacing: spacing) {
-                    ForEach(Array(week.enumerated()), id: \.offset) { _, date in
-                        if let date = date {
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(heatmapColor(count: countFor(date: date)))
-                                .frame(width: cellSize, height: cellSize)
-                        } else {
-                            Color.clear.frame(width: cellSize, height: cellSize)
+        // Compute once — shared between month labels and grid
+        let allWeeks = weekDates
+        let labels = monthLabels(from: allWeeks)
+
+        VStack(alignment: .leading, spacing: 2) {
+            // Month labels
+            ZStack(alignment: .topLeading) {
+                Color.clear.frame(height: 14)
+                ForEach(labels, id: \.1) { label, col in
+                    Text(label)
+                        .font(.system(size: 9))
+                        .foregroundStyle(Color(white: 0.55))
+                        .offset(x: CGFloat(col) * (cellSize + spacing))
+                }
+            }
+
+            // Grid
+            HStack(alignment: .top, spacing: spacing) {
+                ForEach(Array(allWeeks.enumerated()), id: \.offset) { _, week in
+                    VStack(spacing: spacing) {
+                        ForEach(Array(week.enumerated()), id: \.offset) { _, date in
+                            if let date = date {
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(heatmapColor(count: countFor(date: date)))
+                                    .frame(width: cellSize, height: cellSize)
+                            } else {
+                                Color.clear.frame(width: cellSize, height: cellSize)
+                            }
                         }
                     }
                 }

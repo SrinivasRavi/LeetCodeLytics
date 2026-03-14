@@ -96,7 +96,7 @@ final class DashboardViewModel: ObservableObject {
 
                 // Write widget data after all fetches complete
                 if let cal = self.submissionCalendar {
-                    let cutoff = Date().timeIntervalSince1970 - Double(10 * 7 * 86400)
+                    let cutoff = Date().timeIntervalSince1970 - Double(25 * 7 * 86400)
                     let recentCal = Dictionary(
                         cal.dailyCounts
                             .filter { Double($0.key) >= cutoff }
