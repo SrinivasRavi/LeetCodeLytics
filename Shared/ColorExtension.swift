@@ -1,6 +1,11 @@
+import Foundation
 import SwiftUI
 
 extension Color {
+    /// LeetCode brand orange — used throughout the app and widget.
+    /// Centralised here so a brand colour change requires one edit, not eight.
+    static let leetcodeOrange = Color(hex: "FFA116")
+
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0

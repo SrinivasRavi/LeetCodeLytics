@@ -38,13 +38,26 @@ The distinction matters: a unit test that passes with a mock can hide a real int
 
 ## Current State
 
-**Shipped: v2.12.0** (branch: `main`)
+**Shipped: v3.0.0** (branch: `main`)
 
-Widgets live. App + widget stable. 106 tests pass.
+Production hardening pass. 127 tests pass. Key changes from v2.34:
+- `WidgetDataWriter` (Shared/) centralises all widget data persistence — eliminates manual copy-construction in 3 callsites
+- `withCancellationSafeTask` helper extracts the `withCheckedContinuation` + unstructured Task pattern from all 3 ViewModels
+- `DashboardViewModel.recentCalendarSlice(from:)` shared between full-load and background-refresh paths
+- `LeetCodeService.shared` now uses a dedicated URLSession with 30s request / 60s resource timeouts (was URLSession.shared with no timeout)
+- All existing tests preserved + 7 new `WidgetDataWriterTests`
 
 ---
 
 ## Versioning History
+
+### v3.0.0 — Production Hardening ✅
+- **`WidgetDataWriter`** (new, `Shared/WidgetDataWriter.swift`): Centralises widget data read/write/partial-update/DCC-mark. Eliminates manual 8-field copy-construction that was duplicated in DashboardViewModel, LeetCodeLyticsApp, and SettingsView. One missed field = silent data loss — now impossible.
+- **`withCancellationSafeTask`** (new, `LeetCodeLytics/Utilities/CancellationSafeTask.swift`): Extracts the identical `withCheckedContinuation { Task { @MainActor in defer { continuation.resume() } ... } }` pattern from all 3 ViewModels into a single reusable function.
+- **`DashboardViewModel.recentCalendarSlice(from:)`**: Static helper shared between full-load and background-refresh paths — was duplicated between DashboardViewModel and LeetCodeLyticsApp.
+- **`LeetCodeService.shared` timeout**: 30s request / 60s resource (was URLSession.shared with no configured timeout).
+- **127 tests** (was 120): 7 new `WidgetDataWriterTests` covering read/writeAll round-trip, updateCalendar field preservation, markDCCUnavailable, and edge cases (no existing data).
+- Zero UI changes. Zero behaviour changes. All 120 original tests continue to pass.
 
 ### v1.0 — Core App ✅
 Standalone iOS app with all tabs, onboarding, and live API data.
@@ -81,6 +94,61 @@ UI fixes from hands-on testing: streak card layout, badge deduplication, pull-to
 - v2.4: Widget network fetches made sequential to stay within ~30MB extension memory budget
 - v2.5: Widget scheme removed from Xcode — prevents accidental widget-only deploy (always use `LeetCodeLytics` scheme)
 - v2.6: Audit fixes — Cancel button bug (logged user out), 4 dead model structs removed, static DateFormatter/Calendar in HeatmapGridView and BadgesView, SubmissionsView refreshable on all states
+
+### v2.20.0 — Privacy Manifest ✅
+- Added `PrivacyInfo.xcprivacy` to both app and widget extension targets
+- `NSPrivacyTracking: false` — app does not track users across apps/websites
+- `NSPrivacyTrackingDomains: []` — `leetcode.com` and `assets.leetcode.com` are contacted for app functionality only, not tracking; listing them as tracking domains would be false
+- `NSPrivacyAccessedAPITypes`: `NSPrivacyAccessedAPICategoryUserDefaults` / reason `CA92.1` — app reads/writes only data it itself wrote
+- `NSPrivacyCollectedDataTypes` (main app only): Username + OtherDataTypes (session/CSRF tokens), both linked=false, tracking=false, purpose=AppFunctionality
+- Widget extension collects no new data; empty `NSPrivacyCollectedDataTypes`
+- Silences Xcode network instrument red-dot warnings about undeclared domains
+
+### Widget OOM — Investigation Findings (v2.15–v2.20)
+Three OOM crashes occurred across versions. Instruments profiling on v2.19 showed flat 9.99 MiB from ~1 min to ~27 min on `LeetCodeLyticsWidget` process — no growth detected. OOM appears resolved. Likely cumulative effect of three fixes:
+
+1. **v2.15 — Image scaling** (biggest single fix): `astroWidget1.png` was 1750×1702px (~12MB decoded). 4 simultaneous widget renders × 12MB = ~48MB, reliably exceeding the ~30MB extension budget. Fix: proper 1x/2x/3x asset catalog variants (3x = 1000×972px, ~4MB).
+2. **v2.17 — `dailyCounts` stored in `init`**: Was a computed property rebuilt 175× per render (once per heatmap cell). Converted to stored `let` computed once at init time.
+3. **v2.19 — Heatmap colors as file-level `private let` constants**: `heatmapColor(count:)` previously called `Color(red:green:blue:).opacity()` inline — creating new Color objects on every one of the 175 cell renders. Promoted to 4 file-level constants (computed once per process).
+
+**Caveat:** Instruments data represents two hovered time points (1 min and 27 min), not a continuous graph analysis. No mid-recording spikes were verified. A burst spike that causes OOM and then gets freed would not be captured by end-point sampling alone. Consider a longer Instruments session with the graph scrubbed end-to-end before declaring OOM definitively resolved.
+
+### v2.19.0 — Audit Fixes: Bug Fixes, API Modernization, Test Expansion ✅
+- **Bug fixes:** `realName` and `userAvatar` made `String?` (crash prevention for null API values); "Unranked" shown when ranking == 0
+- **ViewModel cancellation:** Applied `withCheckedContinuation` + unstructured `Task` pattern to `SubmissionsViewModel` and `SkillsViewModel` (was missing from both; DashboardViewModel had it since v1.5.5)
+- **SwiftUI modernization:** All `.cornerRadius()` replaced with `.clipShape(RoundedRectangle(cornerRadius:))`; all `.foregroundColor` replaced with `.foregroundStyle`
+- **Color consolidation:** `Color.leetcodeOrange` static let added to `ColorExtension.swift`; all `Color(hex: "FFA116")` callsites replaced; heatmap colors promoted to file-level `private let` constants
+- **Performance:** Redundant `startOfDay` call removed from `HeatmapGridView.solveCount(for:)` (364 operations/render); `maxCount` computed as `let` in `TagSection`/`LanguageSection` bodies
+- **Model fixes:** `UserBadge` conforms to `Identifiable` (computed `id: String { badgeID ?? name }`); `ForEach(badges)` replaces offset-based enumeration; `RecentSubmission.id` separator added
+- **Named constant:** `widgetHeatmapWeeks = 25` in `Shared/WidgetData.swift` — shared between `DashboardViewModel` and `WidgetHeatmapView`
+- **Access control:** `LeetCodeService.session` made `private`; `ProblemRing` made `private`
+- **Test expansion:** 106 tests — added null-decode regression, submissions preservation regression, Dashboard dealloc-after-load test; `autoreleasepool` removed from MemoryLeakTests; `languageStatsCallCount`/`skillStatsCallCount` added to MockLeetCodeService; `utcCalendar` changed from `var` to `let`
+- **Readability:** `?.isEmpty != false` idiom replaced with explicit `map { !$0.isEmpty }` in `LeetCodeLyticsApp`; `lastUpdatedText` moved from computed view property to `let` in `SettingsView.body`
+
+### v2.18.0 — Senior Code Audit (no code changes, dev reply pass) ✅
+- Full senior developer audit of v2.15.0 codebase conducted; all findings categorized with dev replies; no code changes
+
+### v2.17.0 — Fix Widget OOM (`dailyCounts` rebuilt per cell) ✅
+- `WidgetHeatmapView.dailyCounts` was a computed property called once per heatmap cell (175 cells = 175 full dictionary reconstructions per render). Converted to a stored `let` computed once in `init`. This was the second OOM source after the v2.14 image-scaling fix.
+
+### v2.16.0 — Widget Layout Polish ✅
+- Small widgets: content anchored to top (`alignment: .top` + `padding(.top, 28)`) — moved up from center
+- Medium widget: E/M/H row moved below streaks (with `Spacer()` between); streak and difficulty fonts bumped one notch
+- Large widget: E/M/H row centered (`.frame(maxWidth: .infinity, alignment: .center)`)
+- `StreakPill` and `DifficultyDot` parameterized with `valueFontSize`/`labelFontSize`/`fontSize` (defaults preserve Large)
+
+### v2.15.0 — Widget Background Fix (Image Scaling) ✅
+- Replaced single 1750×1702px `astroWidget1.png` (all scales) with proper scale variants: 3x=1000×972px, 2x=667×648px, 1x=333×324px — root cause of recurring OOM in small/medium widgets
+
+### v2.14.0 — Widget Background Fix, Opacity Slider, Team Signing ✅
+- **Fixed small/medium widget backgrounds (root cause: OOM).** The `astroWidget1.png` source image was 1750×1702px = ~12MB decoded. WidgetKit renders all widgets in the same extension process. At 4 renders × 12MB each, the ~30MB budget is reliably exceeded — the extension OOM-crashes mid-render, identical to the v2.0–v2.10 fiasco. Large happened to complete before OOM; small/medium didn't. Fix: created properly scaled variants in the asset catalog (3x = 1000×972px/~4MB, 2x = 667×648px, 1x = 333×324px). Total memory for all 4 widget renders on a 3x iPhone: ~15.6MB — safely within budget.
+- Added runtime dim opacity slider to Settings → Widgets (0–80%, step 5%) — reads/writes `widgetDimOpacity` key in App Group UserDefaults; widget reads it at render time via `widgetDimOpacity()` free function; slider triggers `WidgetCenter.shared.reloadAllTimelines()` on change
+- Updated `astroWidget1.png` to user's revised version (stars manually cleaned up)
+- Added `DEVELOPMENT_TEAM: ZHH8F344D5` to all three targets in `project.yml` — eliminates manual "Signing & Capabilities" team selection in Xcode after every `xcodegen generate`
+- Added `import Foundation` to `Shared/ColorExtension.swift` (was relying on implicit SwiftUI re-export)
+
+### v2.13.0 — Codebase Audit & Widget Background Attempt ✅
+- Committed v2.13 state: inlined `containerBackground` ZStack (helper function removed); `widgetDimOpacity` constant = 0.25
 
 ### v2.12.0 — Widget Redesign ✅
 - All 4 widgets now use `astroWidget1.png` as background image (via `containerBackground`)
@@ -136,6 +204,12 @@ These rules are derived from the 10-version widget stabilization effort. Read th
 - **`TimelineProvider` must be self-contained** — it cannot import types from the main app target. All types used in the provider (including `WidgetData`) must be compiled into the widget target directly (via `Shared/`).
 - **Widget `Info.plist` must be explicit** — XcodeGen won't auto-generate for extensions. Provide `INFOPLIST_FILE` pointing to a real file in `project.yml`.
 - **Both `.entitlements` files must declare `com.apple.security.application-groups`** with the value `group.com.leetcodelytics.shared`. Empty entitlements (`<dict/>`) silently break widget data sharing with no error message.
+- **Widget background images must be small AND in sRGB color space.** Two independent requirements:
+  - **Size:** 3x ≤ 1000px max dimension; 2x ≤ 667px; 1x ≤ 333px. Always provide separate files per scale — never reuse the same large file for all three slots.
+  - **Color space:** Images must be converted to sRGB before embedding (`sips --matchTo "/System/Library/ColorSync/Profiles/sRGB Profile.icc"`). Any other ICC profile (Display P3, Color LCD, etc.) causes iOS to decode through the wide color pipeline at **float32 = 16 bytes/pixel** instead of sRGB's 4 bytes/pixel. At 1000×980px: 3.8MB in sRGB vs 15MB in float32. Four widget renders × 15MB = 60MB — double the 30MB budget. The `sips --getProperty space` check is NOT sufficient — it only reports the colorant model (RGB). Always verify `sips --getProperty profile` and confirm it reads `sRGB` after conversion.
+  - **How to verify:** `sips --getProperty profile image.png` must return `sRGB`, not `Color LCD`, `Display P3`, etc.
+  - The symptom "widget OOMs despite correct pixel dimensions" almost always means the ICC profile was not stripped.
+- **`DEVELOPMENT_TEAM` belongs in `project.yml`**, not set manually in Xcode. Add `DEVELOPMENT_TEAM: <teamID>` to each target's `settings.base`. The team ID can be read from the generated `.xcodeproj` (`grep DEVELOPMENT_TEAM LeetCodeLytics.xcodeproj/project.pbxproj`). Without this, `xcodegen generate` resets the signing team on every run, requiring manual re-selection.
 
 ### DateFormatter / Calendar / NumberFormatter
 - **Never** create `DateFormatter`, `Calendar`, `RelativeDateTimeFormatter`, or `NumberFormatter` inside a computed property, view `body`, or instance `let` property of a SwiftUI View
@@ -304,9 +378,11 @@ LeetCodeLytics/                                  ← repo root
       LeetCodeService.swift                      ← GraphQL calls; injectable URLSession for testing
       LeetCodeServiceProtocol.swift              ← protocol enabling ViewModel mock injection
       CacheService.swift                         ← UserDefaults-backed, suiteName = nil
+      KeychainService.swift                      ← session/CSRF/username storage via Security framework
+    Utilities/
+      CancellationSafeTask.swift                 ← withCancellationSafeTask() — shared by all 3 ViewModels
     ViewModels/
-      DashboardViewModel.swift                   ← activeFetch guard; unstructured Task +
-                                                    withCheckedContinuation; writes WidgetData to App Group
+      DashboardViewModel.swift                   ← activeFetch guard; writes WidgetData via WidgetDataWriter
       SubmissionsViewModel.swift                 ← activeFetch guard
       SkillsViewModel.swift                      ← activeFetch guard; topAdvanced/Intermediate/Fundamental
     Views/
@@ -329,6 +405,7 @@ LeetCodeLytics/                                  ← repo root
     LeetCodeLyticsWidget.entitlements            ← App Group: group.com.leetcodelytics.shared
   Shared/                                        ← compiled into BOTH app and widget targets
     WidgetData.swift                             ← Codable; fetchedAt: Date?; written by app, read by widget
+    WidgetDataWriter.swift                       ← centralised read/write/partial-update for WidgetData
     SubmissionCalendar.swift                     ← double-decode helper (JSON string → [Int: Int])
     StreakCalculator.swift                       ← any-solve streak from UTC timestamps
     ColorExtension.swift
@@ -556,7 +633,7 @@ query skillStats($username: String!) {
 
 ---
 
-## Test Suite (106 tests)
+## Test Suite (127 tests)
 
 | File | Coverage |
 |------|----------|
@@ -571,6 +648,7 @@ query skillStats($username: String!) {
 | `SkillsViewModelTests` | load, top-10 cap, sort order, empty state, multiple calls |
 | `InfoPlistTests` | version ≠ "1.0" placeholder, non-empty, bundle ID prefix |
 | `MemoryLeakTests` | All three ViewModels deallocate with and without load |
+| `WidgetDataWriterTests` | read/writeAll round-trip, updateCalendar preservation, markDCCUnavailable, edge cases |
 
 **Adding a new model or API call requires:**
 1. A fixture decode test in `ModelDecodeTests` using a real API response sample (copy from a live API call, not invented)
@@ -627,7 +705,10 @@ These must hold at all times. Violating them requires explicit user approval.
 
 ## Backlog (deferred — do not implement until explicitly requested)
 
+- **Throttle network calls on tab switch:** Add `forceRefresh: Bool = false` parameter to all three `ViewModel.load()` methods. Tab switches use default `false` — skip network if cache is < 5 min old (`CacheService.isStale(key:maxAge:300)`). Pull-to-refresh passes `forceRefresh: true` to always fetch. All three ViewModels and their callers need updating; `CacheService.isStale` already exists.
+
 - **Unique Solved Streak:** Split "Solved Streak" into two:
   - "Any Solved Streak" — consecutive days with ≥1 successful submission
   - "Unique Solved Streak" — consecutive days where a previously-unsolved problem was accepted
+
 - **DCC Streak end-to-end test:** Verify 🔥 Daily Question Streak works correctly end-to-end with session cookies
