@@ -41,34 +41,31 @@ struct LeetCodeProvider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<LeetCodeEntry>) -> Void) {
         let data = loadCached() ?? .placeholder
         let now = Date()
+
+        // Single entry — keeps peak memory minimal.
+        // WidgetKit pre-renders ALL timeline entries into snapshot bitmaps.
+        // The large widget snapshot alone is ~5 MB. With 5 entries × 4 widget kinds,
+        // WidgetKit could retain ~100 MB of snapshots — far exceeding the 30 MB limit.
+        // One entry = one snapshot per widget kind — safe.
+        let entry = LeetCodeEntry(date: now, data: data)
+
+        // Schedule the next refresh at the next UTC 6-hour boundary so the rocket
+        // background still cycles (00:00, 06:00, 12:00, 18:00). The main app also
+        // calls reloadAllTimelines() on every Dashboard load, which replaces this
+        // timeline immediately with fresh data.
         let todayStart = providerUTCCalendar.startOfDay(for: now)
-
-        // Entry for the current moment (picks up the right rocket slot or success/broken).
-        var entries = [LeetCodeEntry(date: now, data: data)]
-
-        // Pre-compute entries at remaining UTC 6-hour boundaries so the rocket image
-        // advances automatically without any network call or app interaction.
-        for hour in [6, 12, 18] {
-            if let boundary = providerUTCCalendar.date(byAdding: .hour, value: hour, to: todayStart),
-               boundary > now {
-                entries.append(LeetCodeEntry(date: boundary, data: data))
-            }
+        let currentHour = providerUTCCalendar.component(.hour, from: now)
+        let nextSlotHour = ((currentHour / 6) + 1) * 6  // next 6-hour boundary
+        let refreshAt: Date
+        if nextSlotHour >= 24 {
+            // Next boundary is tomorrow 00:00 UTC + 1 min buffer
+            refreshAt = providerUTCCalendar.date(byAdding: .minute, value: 1,
+                to: providerUTCCalendar.date(byAdding: .day, value: 1, to: todayStart)!)!
+        } else {
+            refreshAt = providerUTCCalendar.date(byAdding: .hour, value: nextSlotHour, to: todayStart)!
         }
 
-        // Explicit entry at UTC midnight. widgetBackgroundName recomputes the streak live
-        // from recentCalendar timestamps at render time, so this entry will show Broken
-        // immediately if the user did not solve during the previous UTC day — no background
-        // refresh or app open required. The same data payload is reused; only entry.date
-        // changes, which is what StreakCalculator and didSolveToday evaluate against Date().
-        let nextMidnight = providerUTCCalendar.date(byAdding: .day, value: 1, to: todayStart)!
-        entries.append(LeetCodeEntry(date: nextMidnight, data: data))
-
-        // Refresh policy: UTC midnight + 5 min. Triggers a fresh getTimeline so the next
-        // day's entries (06:00, 12:00, 18:00, midnight) are computed with up-to-date data.
-        // Background App Refresh (or a Dashboard open) may call reloadAllTimelines()
-        // earlier and discard these entries; that's fine.
-        let refreshAt = providerUTCCalendar.date(byAdding: .minute, value: 5, to: nextMidnight)!
-        completion(Timeline(entries: entries, policy: .after(refreshAt)))
+        completion(Timeline(entries: [entry], policy: .after(refreshAt)))
     }
 
     private func loadCached() -> WidgetData? {
