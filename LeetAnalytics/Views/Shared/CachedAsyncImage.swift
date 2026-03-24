@@ -40,8 +40,17 @@ struct CachedAsyncImage<Placeholder: View>: View {
             }
         }
         .task(id: url?.absoluteString) {
-            guard let url, image == nil else { return }
-            self.image = await loadImage(from: url)
+            guard let url else {
+                // URL became nil (e.g. username changed to user with no avatar) — clear display.
+                self.image = nil
+                return
+            }
+            // Always fetch when URL changes. URLCache serves cached data instantly when available.
+            // Old image stays visible until new one arrives (stale-while-revalidate).
+            if let fetched = await loadImage(from: url) {
+                self.image = fetched
+            }
+            // On network failure, keep the existing image rather than blanking.
         }
     }
 

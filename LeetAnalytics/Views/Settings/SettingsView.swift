@@ -33,17 +33,21 @@ struct SettingsView: View {
             List {
                 // Account
                 Section("Account") {
-                    HStack {
-                        Label("Username", systemImage: "person.circle")
-                        Spacer()
-                        Text(username)
-                            .foregroundStyle(.gray)
-                    }
-                    Button("Change Username") {
+                    Button {
                         newUsername = username
                         showUsernameSheet = true
+                    } label: {
+                        HStack {
+                            Label("Username", systemImage: "person.circle")
+                                .foregroundStyle(.primary)
+                            Spacer()
+                            Text(username)
+                                .foregroundStyle(.gray)
+                            Image(systemName: "chevron.right")
+                                .font(.caption2)
+                                .foregroundStyle(.tertiary)
+                        }
                     }
-                    .foregroundStyle(Color.leetcodeOrange)
                 }
 
                 // Authentication
@@ -125,6 +129,14 @@ struct SettingsView: View {
                 isValidating: $isValidating,
                 validationError: $validationError
             ) { validated in
+                // If the new username differs from the authenticated user, sign out.
+                // Keeping stale credentials for a different user would show wrong DCC streak.
+                let authenticatedUsername = KeychainService.retrieve(key: KeychainService.authenticatedUsernameKey) ?? ""
+                if !authenticatedUsername.isEmpty && validated != authenticatedUsername {
+                    KeychainService.clearAll()
+                    isSignedIn = false
+                    markWidgetDCCUnavailable()
+                }
                 username = validated
                 showUsernameSheet = false
             }
