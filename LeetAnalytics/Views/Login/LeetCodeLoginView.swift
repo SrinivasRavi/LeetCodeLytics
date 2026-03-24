@@ -11,7 +11,11 @@ struct LeetCodeLoginView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
-        config.websiteDataStore = WKWebsiteDataStore.default()
+        // Use a non-persistent (ephemeral) store so every login attempt starts
+        // with a clean cookie jar. Without this, WebKit's shared default store
+        // retains the previous session cookie, auto-redirects on the login page,
+        // and fires onSessionDetected with old credentials — bypassing the login UI.
+        config.websiteDataStore = WKWebsiteDataStore.nonPersistent()
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = context.coordinator
         if let url = URL(string: "https://leetcode.com/accounts/login/") {
